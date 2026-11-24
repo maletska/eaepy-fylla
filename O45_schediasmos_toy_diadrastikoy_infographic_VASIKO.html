@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ω45 — Σχεδιασμός του διαδραστικού infographic</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --card:#fff; --ink:#1b1b1a; --muted:#5f5f5a;
+    --line:#e0e0da; --accent:#0b6b5e; --accent-soft:#e6f2f0;
+    --warn:#a8600a; --warn-soft:#fdf2e2;
+    --book:#2f4858; --book-soft:#eef3f6;
+    --opt:#6b4fa8; --opt-soft:#f1ecfa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 "Segoe UI",Roboto,-apple-system,sans-serif;padding:0 16px 64px}
+  .wrap{max-width:900px;margin:0 auto}
+
+  header.top{padding-block:28px 20px;border-bottom:3px solid var(--accent)}
+  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);font-weight:700}
+  h1{font-size:clamp(22px,4.2vw,31px);margin:6px 0 4px;line-height:1.25}
+  .sub{color:var(--muted);font-size:15px}
+
+  .ident{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin:20px 0}
+  .ident h2{font-size:14px;margin:0 0 12px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--muted)}
+  .grid3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(175px,1fr))}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px}
+  input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:#fff;
+    border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+  textarea{min-height:72px;resize:vertical;line-height:1.55}
+  textarea.code{font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14.5px;line-height:1.7;min-height:175px}
+  input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+
+  .phase{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:20px;margin:18px 0}
+  .phase > h2{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 12px;font-size:19px}
+  .num{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;
+    background:var(--accent);color:#fff;border-radius:50%;font-size:14px;font-weight:700}
+
+  h3{font-size:16px;margin:18px 0 6px}
+  h4{font-size:14.5px;margin:14px 0 4px;color:var(--muted)}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 12px;padding-left:22px}
+  li{margin-bottom:4px}
+
+  .goals{background:var(--accent-soft);border-radius:10px;padding:14px 18px;margin:16px 0}
+  .goals h2{margin:0 0 8px;font-size:14px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--accent)}
+  .goals ul{margin:0;padding-left:20px}
+
+  /* ---------- αυτούσιο κείμενο βιβλίου ---------- */
+  .book{background:var(--book-soft);border:1px solid #cfdbe3;border-left:5px solid var(--book);
+    border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+  .book > .src{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--book);font-weight:700;margin-bottom:8px}
+  .book p:last-child,.book ul:last-child{margin-bottom:0}
+  .defbox{background:#fff;border:1px dashed var(--book);border-radius:8px;
+    padding:10px 14px;margin:10px 0}
+  .defbox p:last-child{margin-bottom:0}
+
+  pre.algo{background:#1d2424;color:#e8f0ee;border-radius:10px;padding:15px 18px;
+    overflow-x:auto;font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14.5px;line-height:1.75;margin:12px 0;white-space:pre}
+  pre.algo b{color:#7fd6c2;font-weight:700}
+  pre.algo i{color:#9fb0ad;font-style:normal}
+  code{background:#ecebe6;padding:1px 6px;border-radius:5px;
+    font-family:"Cascadia Mono",Consolas,monospace;font-size:14.5px}
+
+  .note{background:var(--warn-soft);border-left:4px solid var(--warn);
+    padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;font-size:15px}
+  .task{border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:15px 18px;margin:16px 0;background:#fcfcfb}
+  .task h3{margin:0 0 8px;font-size:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+  .task.optional{border-left-color:var(--opt);background:#fdfcff}
+  .tag{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:2px 9px;border-radius:20px;white-space:nowrap}
+  .tag.opt{background:var(--opt-soft);color:var(--opt);border:1px solid #d6c9ef}
+  .tag.adv{background:#fdeee8;color:#a8400a;border:1px solid #f1cdbe}
+  .tag.core{background:var(--accent-soft);color:var(--accent);border:1px solid #bcdcd6}
+  .task.advanced{border-left-color:var(--opt)}
+  .advnote{background:var(--opt-soft);border-left-color:var(--opt)}
+  details.recap{border:1px solid var(--line);border-radius:12px;background:var(--card);
+    padding:0 18px;margin:18px 0}
+  details.recap > summary{cursor:pointer;font-weight:700;color:var(--accent);
+    padding:14px 0;list-style:revert}
+  details.recap[open] > summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+  details.recap > *:last-child{margin-bottom:14px}
+  .field{margin:12px 0}
+  .hint{font-size:13.5px;color:var(--muted);margin:4px 0 0}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f0f0ec;font-size:14px}
+  td input[type=text]{border:none;background:transparent;padding:2px}
+  .scroll{overflow-x:auto}
+
+  /* ---------- drag & drop αντιστοίχισης ---------- */
+  .dnd{margin:12px 0}
+  .dnd-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#f2f2ee;
+    border:1px dashed var(--line);border-radius:10px;min-height:54px;align-content:flex-start}
+  .dnd-pool.over,.dnd-slot.over{outline:2px dashed var(--accent);outline-offset:2px;background:var(--accent-soft)}
+  .chip{display:inline-block;background:#fff;border:1px solid var(--accent);color:var(--accent);
+    border-radius:20px;padding:6px 14px;font-size:14.5px;font-weight:600;cursor:grab;
+    user-select:none;touch-action:none}
+  .chip:active{cursor:grabbing}
+  .chip.sel{background:var(--accent);color:#fff}
+  .dnd-rows{display:grid;gap:8px;margin-top:12px}
+  .dnd-row{display:grid;grid-template-columns:1fr minmax(150px,210px);gap:10px;align-items:center;
+    background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .dnd-slot{min-height:42px;border:1px dashed var(--line);border-radius:20px;
+    display:grid;place-items:center;padding:4px;background:#fafaf8;font-size:14px;color:var(--muted)}
+  .dnd-slot::before{content:"σύρε εδώ";color:var(--muted);font-size:13.5px}
+  .dnd-slot.filled::before{content:none}
+  .dnd-slot .chip{cursor:grab}
+  .dnd-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .dnd-tools button{font-size:14px;padding:7px 14px;background:#fff;color:var(--accent);
+    border:2px solid var(--accent);border-radius:9px}
+  .dnd-msg{font-size:14px;font-weight:600;margin-top:8px;min-height:20px}
+  .dnd-msg.ok{color:var(--accent)} .dnd-msg.bad{color:#a33}
+  /* ---------- αυτοέλεγχος λιστών επιλογής ---------- */
+  select.qsel{width:100%;padding:8px;border-radius:8px;border:1px solid var(--line);font:inherit;background:#fff;color:var(--ink)}
+  td select.qsel{padding:4px}
+  .popt{display:none}
+  select.qsel.right{border:2px solid var(--accent);background:var(--accent-soft)}
+  select.qsel.wrong{border:2px solid #a33;background:#fbeaea}
+  input.qin.right{outline:2px solid var(--accent);background:var(--accent-soft)}
+  input.qin.wrong{outline:2px solid #a33;background:#fbeaea}
+  @media (max-width:600px){
+    .bar{position:static;padding:12px 0}
+    .barcard{padding:12px}
+    .btns button{flex:1 1 100%;padding:10px 14px}
+    .dnd-row{grid-template-columns:1fr}
+  }
+
+  /* ---------- διερμηνευτής ΓΛΩΣΣΑΣ ---------- */
+  .glossa-interpreter-wrapper{border:2px solid var(--accent);border-radius:12px;
+    padding:14px;margin:14px 0;background:#fbfdfc}
+  .gl-toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .gl-toolbar.gl-sym{margin-bottom:12px}
+  .gl-chip{font:inherit;font-size:13.5px;font-weight:600;background:#fff;color:var(--accent);
+    border:1px solid var(--accent);border-radius:18px;padding:5px 12px;cursor:pointer}
+  .gl-chip:hover{background:var(--accent-soft)}
+  .gl-sym .gl-chip{font-family:"Cascadia Mono",Consolas,monospace;padding:5px 10px}
+  .gl-grid{display:grid;gap:12px;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+  @media (max-width:720px){ .gl-grid{grid-template-columns:1fr} }
+  .gl-lab{font-size:12.5px;font-weight:700;color:var(--muted);margin:0 0 4px;
+    text-transform:uppercase;letter-spacing:.04em}
+  .gl-code{width:100%;font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14px;line-height:1.65;border:1px solid var(--line);border-radius:8px;padding:10px;
+    background:#fff;resize:vertical;min-height:190px;white-space:pre;overflow-x:auto}
+  .gl-in{width:100%;font-family:"Cascadia Mono",Consolas,monospace;font-size:14px;
+    border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;resize:vertical;min-height:78px}
+  .gl-out{margin:0;background:#1d2424;color:#e8f0ee;border-radius:8px;padding:10px 12px;
+    min-height:86px;max-height:220px;overflow:auto;font-family:"Cascadia Mono",Consolas,monospace;
+    font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .gl-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .gl-btns button{font:inherit;font-size:14.5px;font-weight:700;border-radius:9px;padding:9px 18px;
+    cursor:pointer;background:#fff;color:var(--accent);border:2px solid var(--accent)}
+  .gl-btns .gl-go{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .gl-msg{font-size:14px;font-weight:600;margin-top:10px;min-height:20px;color:var(--muted)}
+  .gl-msg.gl-err{color:#a33}
+  .gl-msg.gl-ok{color:var(--accent)}
+  .gl-tablab{margin-top:12px}
+  .gl-tablebox{overflow:auto;max-height:340px;border-radius:8px}
+  .gl-table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;margin:0}
+  .gl-table th,.gl-table td{border:1px solid var(--line);padding:5px 8px;white-space:nowrap}
+  .gl-table th{position:sticky;top:0;background:#eef3f2;font-size:12.5px}
+  .gl-table .gl-ln{color:var(--muted);text-align:center;width:64px}
+
+
+  /* ---------- φύλλο προχωρημένων ---------- */
+  .lvl{display:inline-block;margin-left:8px;font-size:11.5px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;padding:2px 10px;border-radius:20px;
+    background:#fdeee8;color:#a8400a;border:1px solid #f1cdbe;vertical-align:middle}
+  body.adv-sheet header.top{border-bottom-color:#a8400a}
+  body.adv-sheet .kicker{color:#a8400a}
+  body.adv-sheet .num{background:#a8400a}
+  .advnote{background:#fdeee8;border-left-color:#a8400a}
+  details.theoryfold{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:10px 18px;margin:18px 0}
+  details.theoryfold > summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--book);
+    padding:8px 0;list-style:none}
+  details.theoryfold > summary::-webkit-details-marker{display:none}
+  details.theoryfold > summary::before{content:"▸ ";color:var(--book)}
+  details.theoryfold[open] > summary::before{content:"▾ "}
+
+  /* κενές γραμμές: μόνο στην εκτύπωση */
+  .print-only-lines{display:none}
+
+  .bar{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 22%);
+    padding:24px 0 12px;margin-top:28px}
+  .barcard{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:16px 18px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:11px 20px;cursor:pointer}
+  #saveBtn{background:var(--accent);color:#fff}
+  #saveBtn:hover{background:#08574c}
+  #loadBtn,#printBtn{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+  #loadBtn:hover,#printBtn:hover{background:var(--accent-soft)}
+  button:focus-visible{outline:3px solid #08574c;outline-offset:2px}
+  .bartext{font-size:14px;color:var(--muted)}
+  #status{font-size:14px;font-weight:600;color:var(--accent);margin-top:8px;min-height:20px}
+
+  footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--muted)}
+
+  /* ================= ΕΚΤΥΠΩΣΗ ================= */
+  @media print{
+    @page{ size:A4; margin:14mm 13mm; }
+    body{background:#fff;padding:0;font-size:11.5pt;line-height:1.5}
+    .wrap{max-width:none}
+    .bar,.hint,.dnd-tools,.dnd-msg{display:none !important}
+    /* στο φύλλο προχωρημένων η υπενθύμιση θεωρίας δεν τυπώνεται */
+    details.recap{display:none !important}
+
+    /* ο διερμηνευτής δεν τυπώνεται ποτέ */
+    .glossa-interpreter-wrapper{display:none !important}
+    /* στη θέση του, κενές γραμμές για γράψιμο με στυλό */
+    .print-only-lines{display:block !important;break-inside:avoid;page-break-inside:avoid;margin:8px 0 14px}
+    .print-only-lines .pl-title{font-size:10.5pt;font-weight:700;color:#000;margin:0 0 6px}
+    .print-only-lines .pl-code{font-family:"Cascadia Mono",Consolas,monospace;font-size:10.5pt;
+      line-height:1.9;white-space:pre;border:1px solid #666;padding:8px 10px;margin:0 0 8px}
+    .print-only-lines .pl-line{display:block;border-bottom:1px solid #444;height:9mm}
+
+    header.top{padding-block:0 10px;border-bottom:2px solid #000}
+    .kicker,.sub{color:#000}
+    h1{font-size:18pt;margin:4px 0}
+
+    .phase,.ident,.task,.goals,.note,.book,.defbox{
+      background:#fff !important;border:1px solid #999;border-radius:0;
+      break-inside:avoid;page-break-inside:avoid;margin:10px 0;padding:10px 12px}
+    .goals,.note,.book{border-left:3px solid #000}
+    .book > .src{color:#000}
+    .phase > h2{font-size:13pt;margin-bottom:8px}
+    .num{background:#000 !important;color:#fff !important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .tag{border:1px solid #000 !important;background:none !important;color:#000 !important}
+    h3{font-size:12pt;margin:10px 0 4px}
+
+    pre.algo{background:#fff !important;color:#000 !important;border:1px solid #666;
+      border-radius:0;font-size:10.5pt;padding:8px 10px}
+    pre.algo b{color:#000 !important;font-weight:700}
+    pre.algo i{color:#444 !important}
+    code{background:none;border:1px solid #bbb;padding:0 3px}
+
+    ::placeholder{color:transparent !important;opacity:0 !important}
+    ::-webkit-input-placeholder{color:transparent !important;opacity:0 !important}
+    ::-moz-placeholder{color:transparent !important;opacity:0 !important}
+    :-ms-input-placeholder{color:transparent !important;opacity:0 !important}
+    label{color:#000}
+    input[type=text]{border:0;border-bottom:1px solid #000;border-radius:0;
+      padding:0 0 5mm 0;line-height:1}
+    td input[type=text]{border-bottom:0;padding:0}
+    textarea{border:1px solid #888;border-radius:0;background:#fff;min-height:38mm}
+    textarea.code{min-height:80mm}
+    table{font-size:10.5pt}
+    th{background:#eee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    td{height:16mm;vertical-align:top}
+
+    /* drag & drop στο χαρτί: λίστα όρων + κενά κουτάκια */
+    .dnd-pool{border:1px solid #666;background:#fff !important;min-height:0;padding:8px}
+    .chip{border:1px solid #000;color:#000;background:#fff !important;border-radius:0}
+    .dnd-row{border:1px solid #999;border-radius:0;page-break-inside:avoid}
+    .dnd-slot{border:1px solid #000;border-radius:0;min-height:12mm;background:#fff !important}
+    .dnd-slot::before{content:none !important}
+    .dnd-slot .chip{display:none}
+
+    /* λίστες επιλογής στο χαρτί: επιλογές για τσεκάρισμα */
+    select.qsel{display:none !important}
+    .popt{display:flex !important;flex-wrap:wrap;gap:4px 18px;font-size:11pt;padding:2px 0}
+    .popt.tight{gap:4px 14px;justify-content:center}
+    .popt span{white-space:nowrap}
+    .quiz td{height:auto;vertical-align:middle}
+    textarea:not(.code){min-height:30mm !important}
+    h2,h3,label,.field > p{break-after:avoid;page-break-after:avoid}
+    .field{break-inside:avoid;page-break-inside:avoid}
+
+    /* στο χαρτί η θεωρία των προχωρημένων τυπώνεται ανοιχτή */
+    details.theoryfold{border:1px solid #999;border-radius:0;page-break-inside:auto}
+    details.theoryfold > summary{font-size:12pt}
+    details.theoryfold > div,details.theoryfold > section{display:block !important}
+    .lvl{border:1px solid #000 !important;background:none !important;color:#000 !important}
+    footer{border-top:1px solid #999;font-size:9pt;color:#000}
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Διδακτική ώρα 45 · Δράση Ενεργού Πολίτη · Στόχος Β.Α. 16</div>
+  <h1>Σχεδιασμός του διαδραστικού infographic</h1>
+  <p class="sub">Εισαγωγή στις Αρχές της Επιστήμης των Η/Υ · Β΄ ΓΕΛ · σχ. έτος 2026-2027</p>
+</header>
+
+<section class="ident">
+  <h2>Η ομάδα μας</h2>
+  <div class="grid3">
+    <div><label for="m1">1ο μέλος</label><input type="text" id="m1" data-field="m1" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="m2">2ο μέλος <span style="font-weight:400">(προαιρετικό)</span></label><input type="text" id="m2" data-field="m2" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="m3">3ο μέλος <span style="font-weight:400">(προαιρετικό)</span></label><input type="text" id="m3" data-field="m3" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="tmima">Τμήμα</label><input type="text" id="tmima" data-field="tmima" placeholder="π.χ. Β3"></div>
+  </div>
+</section>
+
+<div class="goals">
+  <h2>Στόχοι της ώρας</h2>
+  <ul>
+    <li>Να μετατρέπετε τα κεφάλαια του Χάρτη σε μηνύματα με ιεραρχία, ένα ανά ενεργό σημείο.</li>
+    <li>Να σχεδιάζετε τη διαδραστικότητα: τι βλέπει ο χρήστης πριν, τι μετά την ενέργειά του.</li>
+    <li>Να ελέγχετε το σχέδιό σας με λίστα προσβασιμότητας, ώστε να το διαβάζουν όλοι.</li>
+    <li>Να τεκμηριώνετε πηγές, άδειες εικόνων και τη δήλωση για ό,τι παρήχθη από μηχανή.</li>
+  </ul>
+</div>
+
+<section class="phase">
+  <h2><span class="num">1</span> Αφόρμηση</h2>
+  <p>Ο Χάρτης σας υπάρχει πια ως κείμενο. Κείμενο όμως δεν διαβάζει κανείς στον διάδρομο του
+  σχολείου. Σήμερα σχεδιάζετε τη μορφή με την οποία θα φτάσει στους άλλους: ένα
+  <strong>διαδραστικό infographic</strong>, φτιαγμένο σε περιβάλλον όπως το Genially ή το Canva.</p>
+
+  <div class="field">
+    <label for="q1">Θυμηθείτε ένα infographic ή μια αφίσα που σας έκανε να σταματήσετε. Τι ήταν αυτό
+    που τράβηξε το βλέμμα σας <strong>πρώτο</strong>, πριν διαβάσετε λέξη;</label>
+    <textarea id="q1" data-field="q1"></textarea>
+  </div>
+
+  <div class="field">
+    <label for="q2">Ο Χάρτης σας έχει πολλούς κανόνες. Αν ο αναγνώστης κρατούσε <strong>έναν
+    μόνο</strong> από όλους, ποιον θα θέλατε να είναι; Γράψτε τον σε μία πρόταση, όπως θα μπει σε
+    τίτλο.</label>
+    <textarea id="q2" data-field="q2"></textarea>
+  </div>
+</section>
+
+<section class="phase">
+  <h2><span class="num">2</span> Οικοδόμηση της γνώσης</h2>
+  <h3>Η ιεραρχία: τρία επίπεδα, όχι δέκα</h3>
+
+  <p>Ένα infographic δεν είναι κείμενο με εικόνες. Είναι <strong>ιεραρχία</strong>. Ο αναγνώστης
+  περνά από τρία επίπεδα, με αυτή τη σειρά, και σε κάθε επίπεδο αποφασίζει αν θα προχωρήσει:</p>
+
+  <ol>
+    <li><strong>Το ένα μήνυμα.</strong> Ο τίτλος και η κεντρική εικόνα. Διαβάζεται από απόσταση,
+    χωρίς προσπάθεια. Αν δεν στέκει μόνο του, τίποτε άλλο δεν θα διαβαστεί.</li>
+    <li><strong>Τα ενεργά σημεία.</strong> Τέσσερα ως έξι. Το καθένα κρατά έναν κανόνα του Χάρτη.
+    Φαίνονται ότι πατιούνται <em>πριν</em> τα πατήσει κανείς.</li>
+    <li><strong>Το βάθος.</strong> Ό,τι ανοίγει μετά το κλικ: η διατύπωση του κανόνα, η αιτιολόγηση,
+    ένα παράδειγμα, η πηγή.</li>
+  </ol>
+  <svg viewBox="0 0 680 400" role="img" aria-label="Σκαρίφημα του διαδραστικού infographic: κεντρική οθόνη με πέντε ενεργά σημεία και το παράθυρο που ανοίγει το καθένα" style="max-width:100%;height:auto;display:block;margin:12px auto">
+  <defs><marker id="ar45" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#5f5f5a"/></marker></defs>
+
+  <text x="14" y="16" font-size="12.5" fill="#0b6b5e" font-weight="700">Η κεντρική οθόνη</text>
+
+  <rect x="14" y="26" width="380" height="330" rx="8" fill="#fff" stroke="#0b6b5e" stroke-width="1.8"/>
+  <rect x="30" y="42" width="348" height="44" rx="4" fill="#e6f2f0" stroke="#0b6b5e" stroke-width="1.2"/>
+  <text x="204" y="62" text-anchor="middle" font-size="13" fill="#0b6b5e" font-weight="700">Τίτλος: το ένα μήνυμα του Χάρτη</text>
+  <text x="204" y="78" text-anchor="middle" font-size="11" fill="#5f5f5a">υπότιτλος: ποιοι το γράψαμε και για ποιους</text>
+
+  <rect x="30" y="98" width="348" height="196" rx="4" fill="#f7f7f5" stroke="#c9c9c2" stroke-width="1.2"/>
+  <text x="204" y="120" text-anchor="middle" font-size="11.5" fill="#5f5f5a">κεντρική εικόνα — το σχολείο και τα εργαλεία του</text>
+
+  <g font-size="12" font-weight="700" fill="#fff">
+    <circle cx="90" cy="160" r="15" fill="#0b6b5e"/><text x="90" y="165" text-anchor="middle">1</text>
+    <circle cx="190" cy="146" r="15" fill="#0b6b5e"/><text x="190" y="151" text-anchor="middle">2</text>
+    <circle cx="300" cy="168" r="15" fill="#0b6b5e"/><text x="300" y="173" text-anchor="middle">3</text>
+    <circle cx="120" cy="248" r="15" fill="#0b6b5e"/><text x="120" y="253" text-anchor="middle">4</text>
+    <circle cx="268" cy="256" r="15" fill="#0b6b5e"/><text x="268" y="261" text-anchor="middle">5</text>
+  </g>
+
+  <rect x="30" y="306" width="348" height="34" rx="4" fill="#fff" stroke="#c9c9c2" stroke-width="1.2"/>
+  <text x="40" y="327" font-size="11" fill="#5f5f5a">Πηγές · άδειες εικόνων · δήλωση: τι παρήχθη από μηχανή</text>
+
+  <g stroke="#5f5f5a" stroke-width="1.4" fill="none" marker-end="url(#ar45)">
+    <path d="M315,168 L432,168"/>
+  </g>
+  <text x="374" y="160" text-anchor="middle" font-size="11" fill="#5f5f5a">κλικ</text>
+
+  <text x="440" y="16" font-size="12.5" fill="#0b6b5e" font-weight="700">Τι ανοίγει ένα ενεργό σημείο</text>
+
+  <rect x="440" y="96" width="226" height="150" rx="8" fill="#fff" stroke="#0b6b5e" stroke-width="1.8"/>
+  <text x="456" y="120" font-size="12" fill="#0b6b5e" font-weight="700">Ένας κανόνας του Χάρτη</text>
+  <line x1="456" y1="130" x2="650" y2="130" stroke="#c9c9c2" stroke-width="1"/>
+  <text x="456" y="150" font-size="11" fill="#1b1b1a">μία πρόταση: τι κάνουμε</text>
+  <text x="456" y="170" font-size="11" fill="#1b1b1a">μία πρόταση: γιατί</text>
+  <text x="456" y="190" font-size="11" fill="#1b1b1a">ένα παράδειγμα από το σχολείο</text>
+  <text x="456" y="214" font-size="11" fill="#5f5f5a">πηγή · εναλλακτικό κείμενο εικόνας</text>
+  <rect x="596" y="104" width="54" height="20" rx="4" fill="#e6f2f0" stroke="#0b6b5e" stroke-width="1"/>
+  <text x="623" y="118" text-anchor="middle" font-size="10.5" fill="#0b6b5e">Κλείσιμο</text>
+
+  <text x="440" y="286" font-size="11.5" fill="#5f5f5a">Κανόνας: ένα ενεργό σημείο</text>
+  <text x="440" y="304" font-size="11.5" fill="#5f5f5a">= ένα μήνυμα = ένα παράθυρο.</text>
+  <text x="440" y="326" font-size="11.5" fill="#5f5f5a">Αν χρειάζεται δεύτερο κλικ για να</text>
+  <text x="440" y="344" font-size="11.5" fill="#5f5f5a">βγει νόημα, το μήνυμα είναι δύο.</text>
+</svg>
+
+  <div class="note"><strong>Ο κανόνας του ενός μηνύματος.</strong> Ένα ενεργό σημείο = ένα μήνυμα =
+  ένα παράθυρο. Αν για να βγει νόημα χρειάζεται ο χρήστης να ανοίξει δύο πράγματα και να τα κρατήσει
+  ταυτόχρονα στο μυαλό του, τότε δεν έχετε ένα μήνυμα — έχετε δύο, και πρέπει να χωριστούν.</div>
+
+  <h3>Διαδραστικότητα σημαίνει απόφαση του χρήστη</h3>
+
+  <p>Διαδραστικό δεν είναι ό,τι κουνιέται. Διαδραστικό είναι ό,τι αλλάζει επειδή <em>ο χρήστης
+  αποφάσισε</em> κάτι. Τα βασικά είδη που έχετε στη διάθεσή σας:</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th style="width:22%">Είδος</th><th style="width:40%">Τι κάνει ο χρήστης</th>
+      <th style="width:38%">Πότε ταιριάζει στον Χάρτη σας</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ενεργό σημείο</strong></td><td>Πατά ένα σημείο της εικόνας και ανοίγει παράθυρο.</td>
+          <td>Για κάθε κανόνα που θέλει μία παράγραφο εξήγησης.</td></tr>
+      <tr><td><strong>Καρτέλες</strong></td><td>Εναλλάσσεται ανάμεσα σε ισότιμα κομμάτια.</td>
+          <td>Για τα κεφάλαια του Χάρτη, που είναι ισότιμα μεταξύ τους.</td></tr>
+      <tr><td><strong>Πριν / μετά</strong></td><td>Σύρει ή πατά και βλέπει δύο εκδοχές της ίδιας εικόνας.</td>
+          <td>Για να δείξετε τη διαφορά σωστής και λανθασμένης πρακτικής.</td></tr>
+      <tr><td><strong>Ερώτηση με απάντηση</strong></td><td>Διαλέγει και παίρνει ανατροφοδότηση.</td>
+          <td>Για να ελέγξει ο ίδιος αν κατάλαβε έναν κανόνα.</td></tr>
+      <tr><td><strong>Σύνδεσμος σε πηγή</strong></td><td>Φεύγει προς το τεκμήριο.</td>
+          <td>Σε κάθε ισχυρισμό με αριθμό ή με νομική αναφορά.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Προσβάσιμο σημαίνει: το διαβάζουν όλοι</h3>
+
+  <p>Ένα infographic που το καταλαβαίνουν μόνο όσοι βλέπουν καλά, διακρίνουν χρώματα και έχουν
+  μεγάλη οθόνη δεν έχει φτάσει σε όλο το σχολείο. Οι απαιτήσεις είναι λίγες και συγκεκριμένες:</p>
+
+  <ul>
+    <li><strong>Αντίθεση.</strong> Σκούρο κείμενο σε ανοιχτό φόντο (ή το αντίστροφο). Γκρι σε γκρι,
+    ποτέ.</li>
+    <li><strong>Όχι μόνο χρώμα.</strong> Αν το κόκκινο σημαίνει «μην το κάνεις», βάλτε και σύμβολο ή
+    λέξη. Αλλιώς η πληροφορία χάνεται για όποιον δεν ξεχωρίζει τα χρώματα.</li>
+    <li><strong>Μέγεθος και γραμματοσειρά.</strong> Κείμενο που διαβάζεται σε οθόνη κινητού, χωρίς
+    μεγέθυνση. Χωρίς διακοσμητικές γραμματοσειρές στα σημαντικά.</li>
+    <li><strong>Εναλλακτικό κείμενο.</strong> Κάθε εικόνα που μεταφέρει νόημα παίρνει μια σύντομη
+    περιγραφή, για όποιον την ακούει αντί να τη βλέπει.</li>
+    <li><strong>Σύντομες προτάσεις.</strong> Μία ιδέα ανά πρόταση. Χωρίς κεφαλαία σε ολόκληρες
+    φράσεις.</li>
+  </ul>
+
+  <div class="note"><strong>Εικόνες και άδειες.</strong> Δεν κατεβάζετε ό,τι βρείτε. Κάθε εικόνα
+  μπαίνει μόνο αν είναι δική σας, ή αν η άδειά της επιτρέπει τη χρήση με αναφορά του δημιουργού.
+  Και ό,τι παρήχθη από εργαλείο Τ.Ν. δηλώνεται — τον ίδιο κανόνα διαφάνειας που γράψατε στον Χάρτη
+  σας τον τηρείτε πρώτοι εσείς.</div>
+
+  <div class="field">
+    <label for="q3">Πέντε ενεργά σημεία σε μία οθόνη, ή δεκαπέντε; Γράψτε ποιο διαλέγετε και ποιο
+    είναι το κόστος της άλλης επιλογής για τον αναγνώστη.</label>
+    <textarea id="q3" data-field="q3" style="min-height:60px"></textarea>
+  </div>
+</section>
+
+<section class="phase">
+  <h2><span class="num">3</span> Εφαρμογή σε ζεύγη</h2>
+  <p>Ο <strong>οδηγός</strong> γράφει, ο <strong>παρατηρητής</strong> ελέγχει φωναχτά κάθε γραμμή.
+  Αλλάζετε ρόλους σε κάθε δραστηριότητα.</p>
+  <div class="task">
+    <h3>Δραστηριότητα 1 — Το σχέδιο σε ένα φύλλο<span class="tag core">Βασική</span></h3>
+    <p>Αυτός ο πίνακας <em>είναι</em> το σχέδιό σας. Ό,τι δεν χωράει εδώ, δεν θα χωρέσει ούτε στην
+    οθόνη. Συμπληρώστε πέντε ενεργά σημεία. Η στήλη «μήνυμα» γράφεται σε <strong>μία</strong>
+    πρόταση — αν χρειάζεστε δύο, το σημείο κρύβει δύο μηνύματα.</p>
+
+    <div class="scroll">
+    <table>
+      <thead><tr><th style="width:6%">#</th><th style="width:30%">Το μήνυμα, σε μία πρόταση</th>
+        <th style="width:26%">Τι ανοίγει με το κλικ</th><th style="width:20%">Από ποιο κεφάλαιο του Χάρτη</th>
+        <th style="width:18%">Ποια εικόνα ή σύμβολο</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><input type="text" data-field="h1a"></td><td><input type="text" data-field="h1b"></td><td><input type="text" data-field="h1c"></td><td><input type="text" data-field="h1d"></td></tr>
+        <tr><td>2</td><td><input type="text" data-field="h2a"></td><td><input type="text" data-field="h2b"></td><td><input type="text" data-field="h2c"></td><td><input type="text" data-field="h2d"></td></tr>
+        <tr><td>3</td><td><input type="text" data-field="h3a"></td><td><input type="text" data-field="h3b"></td><td><input type="text" data-field="h3c"></td><td><input type="text" data-field="h3d"></td></tr>
+        <tr><td>4</td><td><input type="text" data-field="h4a"></td><td><input type="text" data-field="h4b"></td><td><input type="text" data-field="h4c"></td><td><input type="text" data-field="h4d"></td></tr>
+        <tr><td>5</td><td><input type="text" data-field="h5a"></td><td><input type="text" data-field="h5b"></td><td><input type="text" data-field="h5c"></td><td><input type="text" data-field="h5d"></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="field">
+      <label for="a1">Γράψτε τον <strong>τίτλο</strong> της κεντρικής οθόνης — το ένα μήνυμα που
+      μένει σε όποιον δεν πατήσει τίποτα. Έως δώδεκα λέξεις.</label>
+      <textarea id="a1" data-field="a1" style="min-height:52px"></textarea>
+    </div>
+  </div>
+  <div class="task">
+    <h3>Δραστηριότητα 2 — Κάθε στοιχείο έχει δουλειά<span class="tag core">Βασική</span></h3>
+    <p>Σε ένα καλό σχέδιο κανένα στοιχείο δεν είναι διακοσμητικό: το καθένα κάνει μια συγκεκριμένη
+    δουλειά για τον αναγνώστη. Σύρετε κάθε στοιχείο δίπλα στη δουλειά του.</p>
+
+    <div class="dnd" data-field="d1">
+      <div class="dnd-pool">
+        <span class="chip" data-v="Εικονίδιο">Εικονίδιο</span>
+        <span class="chip" data-v="Κενός χώρος">Κενός χώρος</span>
+        <span class="chip" data-v="Υποσέλιδο πηγών">Υποσέλιδο πηγών</span>
+        <span class="chip" data-v="Τίτλος">Τίτλος</span>
+        <span class="chip" data-v="Εναλλακτικό κείμενο">Εναλλακτικό κείμενο</span>
+        <span class="chip" data-v="Ενεργό σημείο">Ενεργό σημείο</span>
+      </div>
+      <div class="dnd-rows">
+        <div class="dnd-row" data-key="r1" data-answer="Τίτλος">
+          <div>Μεταφέρει το ένα μήνυμα σε όποιον κοιτάξει από απόσταση και δεν πατήσει τίποτα.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r2" data-answer="Ενεργό σημείο">
+          <div>Δείχνει ότι πατιέται και ανοίγει έναν κανόνα με την εξήγησή του.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r3" data-answer="Εναλλακτικό κείμενο">
+          <div>Περιγράφει την εικόνα για όποιον την ακούει αντί να τη βλέπει.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r4" data-answer="Υποσέλιδο πηγών">
+          <div>Δείχνει πού στηρίζονται όσα ισχυρίζεστε και τι παρήχθη από μηχανή.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r5" data-answer="Εικονίδιο">
+          <div>Δίνει στο μάτι ένα σημάδι αναγνώρισης, ώστε να μη μετράει μόνο το χρώμα.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r6" data-answer="Κενός χώρος">
+          <div>Ξεχωρίζει τις ομάδες πληροφορίας και αφήνει το μάτι να ξεκουραστεί.</div><div class="dnd-slot"></div></div>
+      </div>
+      <div class="dnd-tools">
+        <button type="button" data-act="check">Έλεγχος</button>
+        <button type="button" data-act="clear">Καθάρισμα</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="a2">Ποιο στοιχείο του σχεδίου σας δεν κάνει καμία από αυτές τις δουλειές; Τι θα το
+      κάνετε: θα του δώσετε δουλειά ή θα το αφαιρέσετε;</label>
+      <textarea id="a2" data-field="a2" style="min-height:56px"></textarea>
+    </div>
+  </div>
+  <div class="task">
+    <h3>Δραστηριότητα 3 — Λίστα ελέγχου προσβασιμότητας<span class="tag core">Βασική</span></h3>
+    <p>Περάστε το σχέδιό σας από τη λίστα, γραμμή γραμμή. Στη στήλη «κατάσταση» επιλέξτε
+    <strong>ΝΑΙ</strong>, <strong>ΟΧΙ</strong> ή <strong>ΕΝ ΜΕΡΕΙ</strong>. Όπου δεν είναι ΝΑΙ, η
+    τελευταία στήλη είναι υποχρεωτική.</p>
+
+    <div class="scroll">
+    <table>
+      <thead><tr><th style="width:34%">Απαίτηση</th><th style="width:28%">Πώς την ελέγχουμε</th>
+        <th style="width:14%">Κατάσταση</th><th style="width:24%">Τι θα αλλάξουμε</th></tr></thead>
+      <tbody>
+        <tr><td>Το κείμενο ξεχωρίζει καθαρά από το φόντο.</td>
+            <td>Κοιτάμε την οθόνη από δύο μέτρα απόσταση.</td>
+            <td><select data-field="p1a" class="qsel" aria-label="Κατάσταση απαίτησης 1"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option><option value="ΕΝ ΜΕΡΕΙ">ΕΝ ΜΕΡΕΙ</option></select></td><td><input type="text" data-field="p1b"></td></tr>
+        <tr><td>Καμία πληροφορία δεν μεταφέρεται μόνο με χρώμα.</td>
+            <td>Φανταζόμαστε το σχέδιο ασπρόμαυρο: χάνεται κάτι;</td>
+            <td><select data-field="p2a" class="qsel" aria-label="Κατάσταση απαίτησης 2"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option><option value="ΕΝ ΜΕΡΕΙ">ΕΝ ΜΕΡΕΙ</option></select></td><td><input type="text" data-field="p2b"></td></tr>
+        <tr><td>Το κείμενο διαβάζεται σε οθόνη κινητού χωρίς μεγέθυνση.</td>
+            <td>Ανοίγουμε το σχέδιο σε κινητό και διαβάζουμε.</td>
+            <td><select data-field="p3a" class="qsel" aria-label="Κατάσταση απαίτησης 3"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option><option value="ΕΝ ΜΕΡΕΙ">ΕΝ ΜΕΡΕΙ</option></select></td><td><input type="text" data-field="p3b"></td></tr>
+        <tr><td>Κάθε εικόνα με νόημα έχει εναλλακτικό κείμενο.</td>
+            <td>Μετράμε εικόνες και περιγραφές: ίδιος αριθμός;</td>
+            <td><select data-field="p4a" class="qsel" aria-label="Κατάσταση απαίτησης 4"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option><option value="ΕΝ ΜΕΡΕΙ">ΕΝ ΜΕΡΕΙ</option></select></td><td><input type="text" data-field="p4b"></td></tr>
+        <tr><td>Φαίνεται ποια σημεία πατιούνται, πριν τα πατήσει κανείς.</td>
+            <td>Δείχνουμε το σχέδιο σε άτομο εκτός ομάδας και ρωτάμε πού θα πατούσε.</td>
+            <td><select data-field="p5a" class="qsel" aria-label="Κατάσταση απαίτησης 5"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option><option value="ΕΝ ΜΕΡΕΙ">ΕΝ ΜΕΡΕΙ</option></select></td><td><input type="text" data-field="p5b"></td></tr>
+        <tr><td>Κάθε παράθυρο κλείνει με φανερό τρόπο.</td>
+            <td>Ελέγχουμε ότι υπάρχει ορατό κουμπί επιστροφής.</td>
+            <td><select data-field="p6a" class="qsel" aria-label="Κατάσταση απαίτησης 6"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option><option value="ΕΝ ΜΕΡΕΙ">ΕΝ ΜΕΡΕΙ</option></select></td><td><input type="text" data-field="p6b"></td></tr>
+        <tr><td>Οι προτάσεις είναι σύντομες, μία ιδέα η καθεμία.</td>
+            <td>Διαβάζουμε φωναχτά: χρειάζεται ανάσα στη μέση;</td>
+            <td><select data-field="p7a" class="qsel" aria-label="Κατάσταση απαίτησης 7"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option><option value="ΕΝ ΜΕΡΕΙ">ΕΝ ΜΕΡΕΙ</option></select></td><td><input type="text" data-field="p7b"></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="field">
+      <label for="a3">Ποια απαίτηση θα σας κοστίσει περισσότερη δουλειά; Γράψτε γιατί αξίζει να την
+      καλύψετε, με ένα συγκεκριμένο πρόσωπο του σχολείου στο μυαλό σας.</label>
+      <textarea id="a3" data-field="a3" style="min-height:60px"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="phase">
+  <h2><span class="num">4</span> Κλείσιμο — τι κρατάμε</h2>
+  <div class="field">
+    <label for="qc">Αν ο αναγνώστης του infographic σας δεν πατήσει τίποτα και φύγει σε λίγα δευτερόλεπτα, τι θα έχει πάρει μαζί του;</label>
+    <textarea id="qc" data-field="qc" style="min-height:60px"></textarea>
+  </div>
+  <div class="note">
+    <strong>Επόμενη ώρα:</strong> περνάμε από το σχέδιο στο πραγματικό αρχείο: κατασκευάζουμε το infographic και το παρουσιάζουμε.
+  </div>
+</section>
+
+<div class="bar">
+  <div class="barcard">
+    <div class="btns">
+      <button type="button" id="saveBtn">💾 Αποθήκευση</button>
+      <button type="button" id="loadBtn">📂 Συνέχεια από αποθηκευμένο</button>
+      <button type="button" id="printBtn">🖨️ Εκτύπωση</button>
+      <input type="file" id="fileIn" accept=".html,text/html" hidden>
+    </div>
+    <div id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<footer>
+  Ω45 · Εισαγωγή στις Αρχές της Επιστήμης των Η/Υ · Β΄ ΓΕΛ · σχ. έτος 2026-2027
+</footer>
+
+</div>
+
+<script>
+/* ================================================================
+   ΔΙΕΡΜΗΝΕΥΤΗΣ ΓΛΩΣΣΑΣ / ΨΕΥΔΟΓΛΩΣΣΑΣ
+   Λεκτικός αναλυτής · Συντακτικός αναλυτής αναδρομικής κατάβασης ·
+   Εκτελεστής με generators και πίνακα τιμών σε κάθε βήμα.
+   ================================================================ */
+(function () {
+'use strict';
+
+/* ---------- βοηθητικά ---------- */
+function deacc(s) {
+  return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+function KW(s) { return deacc(s).toUpperCase().replace(/Σ$/, 'Σ'); }
+
+var LETTER = /[A-Za-zͰ-Ͽἀ-῿_]/;
+var DIGIT = /[0-9]/;
+
+var KEYWORDS = ['ΑΛΓΟΡΙΘΜΟΣ', 'ΤΕΛΟΣ_ΑΝ', 'ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ', 'ΤΕΛΟΣ',
+  'ΔΙΑΒΑΣΕ', 'ΕΜΦΑΝΙΣΕ', 'ΓΡΑΨΕ', 'ΕΚΤΥΠΩΣΕ',
+  'ΑΝ', 'ΤΟΤΕ', 'ΑΛΛΙΩΣ_ΑΝ', 'ΑΛΛΙΩΣ',
+  'ΟΣΟ', 'ΕΠΑΝΑΛΑΒΕ', 'ΜΕΧΡΙΣ_ΟΤΟΥ',
+  'ΓΙΑ', 'ΑΠΟ', 'ΜΕΧΡΙ', 'ΜΕ_ΒΗΜΑ',
+  'ΔΕΔΟΜΕΝΑ', 'ΑΠΟΤΕΛΕΣΜΑΤΑ',
+  'ΠΡΟΓΡΑΜΜΑ', 'ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ', 'ΜΕΤΑΒΛΗΤΕΣ', 'ΣΤΑΘΕΡΕΣ', 'ΑΡΧΗ',
+  'ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ', 'ΑΚΕΡΑΙΕΣ', 'ΠΡΑΓΜΑΤΙΚΕΣ', 'ΧΑΡΑΚΤΗΡΕΣ', 'ΛΟΓΙΚΕΣ',
+  'ΚΑΙ', 'Η', 'ΟΧΙ', 'ΑΛΗΘΗΣ', 'ΨΕΥΔΗΣ', 'DIV', 'MOD'];
+
+var FUNCS = {
+  'Α_Τ': function (x) { return Math.abs(x); },
+  'Α_Μ': function (x) { return Math.trunc(x); },
+  'Τ_Ρ': function (x) { if (x < 0) throw 'Τετραγωνική ρίζα αρνητικού αριθμού.'; return Math.sqrt(x); },
+  'ΗΜ': function (x) { return Math.sin(x * Math.PI / 180); },
+  'ΣΥΝ': function (x) { return Math.cos(x * Math.PI / 180); },
+  'ΕΦ': function (x) { return Math.tan(x * Math.PI / 180); },
+  'Ε': function (x) { return Math.exp(x); },
+  'ΛΟΓ': function (x) { if (x <= 0) throw 'Λογάριθμος μη θετικού αριθμού.'; return Math.log10(x); },
+  'ΛΝ': function (x) { if (x <= 0) throw 'Λογάριθμος μη θετικού αριθμού.'; return Math.log(x); }
+};
+
+function GErr(msg, line) { this.msg = msg; this.line = line; }
+GErr.prototype.toString = function () {
+  return (this.line ? 'Γραμμή ' + this.line + ': ' : '') + this.msg;
+};
+function err(msg, line) { throw new GErr(msg, line); }
+
+/* ---------- λεκτικός αναλυτής ---------- */
+function lex(src) {
+  var toks = [], i = 0, line = 1, n = src.length;
+  while (i < n) {
+    var c = src[i];
+    if (c === '\n') { toks.push({ t: 'NL', line: line }); line++; i++; continue; }
+    if (c === ' ' || c === '\t' || c === '\r') { i++; continue; }
+    if (c === '!') { while (i < n && src[i] !== '\n') i++; continue; }
+
+    // αλφαριθμητικά: '...'  "..."  ''...''  «...»
+    if (c === "'" || c === '"' || c === '«' || c === '“') {
+      var close = c === '«' ? '»' : (c === '“' ? '”' : c);
+      var dbl = (c === "'" && src[i + 1] === "'");
+      var st = i + (dbl ? 2 : 1), v = '';
+      while (st < n) {
+        if (dbl && src[st] === "'" && src[st + 1] === "'") { st += 2; break; }
+        if (!dbl && src[st] === close) { st++; break; }
+        if (src[st] === '\n') err('Το αλφαριθμητικό δεν έκλεισε.', line);
+        v += src[st++];
+      }
+      toks.push({ t: 'STR', v: v, line: line, from: i, to: st });
+      i = st; continue;
+    }
+
+    if (DIGIT.test(c)) {
+      var s0 = i;
+      while (i < n && DIGIT.test(src[i])) i++;
+      if (src[i] === '.' && DIGIT.test(src[i + 1] || '')) { i++; while (i < n && DIGIT.test(src[i])) i++; }
+      toks.push({ t: 'NUM', v: parseFloat(src.slice(s0, i)), line: line, from: s0, to: i });
+      continue;
+    }
+
+    if (LETTER.test(c)) {
+      var s1 = i;
+      while (i < n && (LETTER.test(src[i]) || DIGIT.test(src[i]))) i++;
+      var raw = src.slice(s1, i), up = KW(raw);
+      toks.push({ t: KEYWORDS.indexOf(up) >= 0 ? up : 'ID', v: raw, up: up, line: line, from: s1, to: i });
+      continue;
+    }
+
+    // τελεστές
+    var three = src.substr(i, 3), two = src.substr(i, 2);
+    if (src.substr(i, 3) === '<--') { toks.push({ t: 'ASSIGN', line: line, from: i, to: i + 3 }); i += 3; continue; }
+    if (two === '<-') { toks.push({ t: 'ASSIGN', line: line, from: i, to: i + 2 }); i += 2; continue; }
+    if (c === '←') { toks.push({ t: 'ASSIGN', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (two === '<=' || two === '>=' || two === '<>') { toks.push({ t: 'REL', v: two, line: line, from: i, to: i + 2 }); i += 2; continue; }
+    if (c === '≤') { toks.push({ t: 'REL', v: '<=', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '≥') { toks.push({ t: 'REL', v: '>=', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '≠') { toks.push({ t: 'REL', v: '<>', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '<' || c === '>' || c === '=') { toks.push({ t: 'REL', v: c, line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === ':') { toks.push({ t: ':', line: line, from: i, to: i + 1 }); i++; continue; }
+    if ('+-*/^(),[]'.indexOf(c) >= 0) { toks.push({ t: c, line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '−') { toks.push({ t: '-', line: line, from: i, to: i + 1 }); i++; continue; }
+
+    err('Άγνωστος χαρακτήρας «' + c + '».', line);
+  }
+  toks.push({ t: 'EOF', line: line });
+  return toks;
+}
+
+/* ---------- συντακτικός αναλυτής ---------- */
+function Parser(toks, src) { this.k = toks; this.p = 0; this.src = src; }
+Parser.prototype.pk = function () { return this.k[this.p]; };
+Parser.prototype.at = function (t) { return this.k[this.p].t === t; };
+Parser.prototype.nx = function () { return this.k[this.p++]; };
+Parser.prototype.eat = function (t, what) {
+  if (!this.at(t)) err('Περίμενα ' + (what || t) + ' και βρήκα «' + (this.pk().v || this.pk().t) + '».', this.pk().line);
+  return this.nx();
+};
+Parser.prototype.skipNL = function () { while (this.at('NL')) this.nx(); };
+Parser.prototype.endLine = function () {
+  if (this.at('EOF')) return;
+  if (!this.at('NL')) err('Περίμενα τέλος γραμμής και βρήκα «' + (this.pk().v || this.pk().t) + '».', this.pk().line);
+  this.nx();
+};
+
+Parser.prototype.program = function () {
+  this.skipNL();
+  var name = null, glossa = false;
+  if (this.at('ΑΛΓΟΡΙΘΜΟΣ')) { this.nx(); if (this.at('ID')) name = this.nx().v; this.endLine(); }
+  else if (this.at('ΠΡΟΓΡΑΜΜΑ')) { glossa = true; this.nx(); if (this.at('ID')) name = this.nx().v; this.endLine(); }
+
+  // δηλώσεις ΓΛΩΣΣΑΣ: ΣΤΑΘΕΡΕΣ / ΜΕΤΑΒΛΗΤΕΣ … ΤΥΠΟΣ: ονόματα
+  var consts = [];
+  for (;;) {
+    this.skipNL();
+    if (this.at('ΣΤΑΘΕΡΕΣ')) {
+      this.nx(); this.endLine();
+      for (;;) {
+        this.skipNL();
+        if (!this.at('ID')) break;
+        var cn = this.nx().v;
+        this.eat('REL', 'το σύμβολο =');
+        consts.push({ name: cn, expr: this.expr() });
+        this.endLine();
+      }
+      continue;
+    }
+    if (this.at('ΜΕΤΑΒΛΗΤΕΣ')) {
+      this.nx(); this.endLine();
+      for (;;) {
+        this.skipNL();
+        if (!(this.at('ΑΚΕΡΑΙΕΣ') || this.at('ΠΡΑΓΜΑΤΙΚΕΣ') || this.at('ΧΑΡΑΚΤΗΡΕΣ') || this.at('ΛΟΓΙΚΕΣ'))) break;
+        this.nx(); this.eat(':', 'άνω-κάτω τελεία');
+        while (this.at('ID')) {
+          this.nx();
+          if (this.at('[')) { while (!this.at(']') && !this.at('NL') && !this.at('EOF')) this.nx(); if (this.at(']')) this.nx(); }
+          if (this.at(',')) this.nx(); else break;
+        }
+        this.endLine();
+      }
+      continue;
+    }
+    break;
+  }
+  if (this.at('ΑΡΧΗ')) { this.nx(); this.endLine(); }
+
+  var body = this.block(['ΤΕΛΟΣ', 'ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ']);
+  if (this.at('ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ')) { this.nx(); if (this.at('ID')) this.nx(); }
+  else if (this.at('ΤΕΛΟΣ')) { this.nx(); if (this.at('ID')) this.nx(); }
+  return { name: name, body: body, consts: consts, glossa: glossa };
+};
+
+Parser.prototype.block = function (stop) {
+  var out = [];
+  for (;;) {
+    this.skipNL();
+    if (this.at('EOF')) break;
+    if (stop.indexOf(this.pk().t) >= 0) break;
+    out.push(this.statement());
+  }
+  return out;
+};
+
+Parser.prototype.statement = function () {
+  var tk = this.pk(), ln = tk.line;
+
+  if (tk.t === 'ΔΕΔΟΜΕΝΑ' || tk.t === 'ΑΠΟΤΕΛΕΣΜΑΤΑ') {
+    // Δεδομένα // α, β //   — δηλωτική· την αντιμετωπίζουμε ως Διάβασε / Εμφάνισε
+    this.nx();
+    var names = [];
+    if (this.at('/')) { this.nx(); if (this.at('/')) this.nx(); }
+    while (this.at('ID')) { names.push(this.nx().v); if (this.at(',')) this.nx(); else break; }
+    while (this.at('/')) this.nx();
+    this.endLine();
+    return tk.t === 'ΔΕΔΟΜΕΝΑ'
+      ? { k: 'read', names: names, line: ln, decl: true }
+      : { k: 'print', args: names.map(function (n) { return { k: 'var', name: n, line: ln }; }), line: ln, decl: true };
+  }
+
+  if (tk.t === 'ΔΙΑΒΑΣΕ') {
+    this.nx();
+    var ns = [];
+    do { ns.push(this.eat('ID', 'όνομα μεταβλητής').v); } while (this.at(',') && this.nx());
+    this.endLine();
+    return { k: 'read', names: ns, line: ln };
+  }
+
+  if (tk.t === 'ΕΜΦΑΝΙΣΕ' || tk.t === 'ΓΡΑΨΕ' || tk.t === 'ΕΚΤΥΠΩΣΕ') {
+    this.nx();
+    var args = [this.expr()];
+    while (this.at(',')) { this.nx(); args.push(this.expr()); }
+    this.endLine();
+    return { k: 'print', args: args, line: ln };
+  }
+
+  if (tk.t === 'ΑΝ') return this.ifStmt();
+
+  if (tk.t === 'ΟΣΟ') {
+    this.nx();
+    var c = this.expr(), cs = this.srcOf(c);
+    this.eat('ΕΠΑΝΑΛΑΒΕ', '«επανάλαβε»'); this.endLine();
+    var b = this.block(['ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ']);
+    this.eat('ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ', '«Τέλος_επανάληψης»'); this.endLine();
+    return { k: 'while', cond: c, condSrc: cs, body: b, line: ln };
+  }
+
+  if (tk.t === 'ΕΠΑΝΑΛΑΒΕ' || tk.t === 'ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ') {
+    this.nx(); this.endLine();
+    var b2 = this.block(['ΜΕΧΡΙΣ_ΟΤΟΥ']);
+    var mt = this.eat('ΜΕΧΡΙΣ_ΟΤΟΥ', '«Μέχρις_ότου»');
+    var c2 = this.expr(); this.endLine();
+    return { k: 'repeat', cond: c2, condSrc: this.srcOf(c2), body: b2, line: ln, condLine: mt.line };
+  }
+
+  if (tk.t === 'ΓΙΑ') {
+    this.nx();
+    var v = this.eat('ID', 'όνομα μεταβλητής').v;
+    this.eat('ΑΠΟ', '«από»'); var a = this.expr();
+    this.eat('ΜΕΧΡΙ', '«μέχρι»'); var b3 = this.expr();
+    var st = null;
+    if (this.at('ΜΕ_ΒΗΜΑ')) { this.nx(); st = this.expr(); }
+    this.endLine();
+    var body3 = this.block(['ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ']);
+    this.eat('ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ', '«Τέλος_επανάληψης»'); this.endLine();
+    return { k: 'for', v: v, from: a, to: b3, step: st, body: body3, line: ln };
+  }
+
+  if (tk.t === 'ID') {
+    var name = this.nx().v;
+    this.eat('ASSIGN', 'το σύμβολο εκχώρησης ←');
+    var e = this.expr();
+    this.endLine();
+    return { k: 'assign', name: name, expr: e, line: ln };
+  }
+
+  err('Δεν αναγνωρίζω την εντολή «' + (tk.v || tk.t) + '».', ln);
+};
+
+Parser.prototype.ifStmt = function () {
+  var ln = this.pk().line;
+  this.nx();
+  var c = this.expr(), cs = this.srcOf(c);
+  this.eat('ΤΟΤΕ', '«τότε»');
+  // μονογραμμική μορφή:  Αν συνθήκη τότε <εντολή>
+  if (!this.at('NL') && !this.at('EOF')) {
+    var one = this.statement();
+    return { k: 'if', arms: [{ cond: c, condSrc: cs, body: [one], line: ln }], els: null, line: ln };
+  }
+  this.endLine();
+  var arms = [{ cond: c, condSrc: cs, body: this.block(['ΑΛΛΙΩΣ_ΑΝ', 'ΑΛΛΙΩΣ', 'ΤΕΛΟΣ_ΑΝ']), line: ln }];
+  var els = null;
+  for (;;) {
+    if (this.at('ΑΛΛΙΩΣ_ΑΝ')) {
+      var l2 = this.nx().line;
+      var c2 = this.expr(), cs2 = this.srcOf(c2);
+      this.eat('ΤΟΤΕ', '«τότε»'); this.endLine();
+      arms.push({ cond: c2, condSrc: cs2, body: this.block(['ΑΛΛΙΩΣ_ΑΝ', 'ΑΛΛΙΩΣ', 'ΤΕΛΟΣ_ΑΝ']), line: l2 });
+      continue;
+    }
+    if (this.at('ΑΛΛΙΩΣ')) {
+      this.nx(); this.endLine();
+      els = this.block(['ΤΕΛΟΣ_ΑΝ']);
+    }
+    break;
+  }
+  this.eat('ΤΕΛΟΣ_ΑΝ', '«Τέλος_αν»'); this.endLine();
+  return { k: 'if', arms: arms, els: els, line: ln };
+};
+
+Parser.prototype.srcOf = function (node) {
+  if (node.from == null || node.to == null) return '';
+  return this.src.slice(node.from, node.to).replace(/\s+/g, ' ').trim();
+};
+
+/* --- εκφράσεις: ή, και, όχι, σχεσιακοί, + −, * / div mod, ύψωση σε δύναμη --- */
+Parser.prototype.expr = function () { return this.orE(); };
+Parser.prototype.mk = function (o, a, b, op) {
+  return { k: o, a: a, b: b, op: op, line: a.line, from: a.from, to: (b || a).to };
+};
+Parser.prototype.orE = function () {
+  var a = this.andE();
+  while (this.at('Η')) { this.nx(); var b = this.andE(); a = this.mk('or', a, b); }
+  return a;
+};
+Parser.prototype.andE = function () {
+  var a = this.notE();
+  while (this.at('ΚΑΙ')) { this.nx(); var b = this.notE(); a = this.mk('and', a, b); }
+  return a;
+};
+Parser.prototype.notE = function () {
+  if (this.at('ΟΧΙ')) {
+    var t = this.nx(), b = this.notE();
+    return { k: 'not', a: b, line: t.line, from: t.from, to: b.to };
+  }
+  return this.relE();
+};
+Parser.prototype.relE = function () {
+  var a = this.addE();
+  while (this.at('REL')) { var op = this.nx().v, b = this.addE(); a = this.mk('rel', a, b, op); }
+  return a;
+};
+Parser.prototype.addE = function () {
+  var a = this.mulE();
+  while (this.at('+') || this.at('-')) { var op = this.nx().t, b = this.mulE(); a = this.mk('bin', a, b, op); }
+  return a;
+};
+Parser.prototype.mulE = function () {
+  var a = this.powE();
+  while (this.at('*') || this.at('/') || this.at('DIV') || this.at('MOD')) {
+    var tk = this.nx(), op = tk.t === 'DIV' ? 'div' : tk.t === 'MOD' ? 'mod' : tk.t;
+    var b = this.powE(); a = this.mk('bin', a, b, op);
+  }
+  return a;
+};
+Parser.prototype.powE = function () {
+  var a = this.unary();
+  if (this.at('^')) { this.nx(); var b = this.powE(); return this.mk('bin', a, b, '^'); }
+  return a;
+};
+Parser.prototype.unary = function () {
+  if (this.at('-')) { var t = this.nx(), b = this.unary(); return { k: 'neg', a: b, line: t.line, from: t.from, to: b.to }; }
+  if (this.at('+')) { this.nx(); return this.unary(); }
+  return this.atom();
+};
+Parser.prototype.atom = function () {
+  var t = this.pk();
+  if (t.t === 'NUM') { this.nx(); return { k: 'num', v: t.v, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === 'STR') { this.nx(); return { k: 'str', v: t.v, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === 'ΑΛΗΘΗΣ') { this.nx(); return { k: 'bool', v: true, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === 'ΨΕΥΔΗΣ') { this.nx(); return { k: 'bool', v: false, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === '(') {
+    this.nx(); var e = this.expr();
+    var cl = this.eat(')', 'κλείσιμο παρένθεσης )');
+    e = Object.assign({}, e, { from: t.from, to: cl.to });
+    return e;
+  }
+  if (t.t === 'ID') {
+    this.nx();
+    var fname = KW(t.v);
+    if (this.at('(') && FUNCS[fname]) {
+      this.nx(); var arg = this.expr();
+      var cl2 = this.eat(')', 'κλείσιμο παρένθεσης )');
+      return { k: 'call', f: fname, a: arg, line: t.line, from: t.from, to: cl2.to };
+    }
+    return { k: 'var', name: t.v, line: t.line, from: t.from, to: t.to };
+  }
+  err('Περίμενα τιμή ή μεταβλητή και βρήκα «' + (t.v || t.t) + '».', t.line);
+};
+
+/* ---------- εκτελεστής ---------- */
+function fmt(v) {
+  if (v === true) return 'Αληθής';
+  if (v === false) return 'Ψευδής';
+  if (typeof v === 'number') {
+    if (!isFinite(v)) return '∞';
+    var r = Math.round(v * 1e9) / 1e9;
+    return String(r);
+  }
+  return String(v);
+}
+
+function Machine(src, inputs) {
+  this.src = src;
+  this.inputs = inputs.slice();
+  this.ip = 0;
+  this.vars = {};
+  this.order = [];
+  this.conds = [];
+  this.out = [];
+  this.trace = [];
+  this.steps = 0;
+  this.done = false;
+  this.error = null;
+  var p = new Parser(lex(src), src);
+  this.ast = p.program();
+  this.gen = this.run();
+}
+
+Machine.prototype.set = function (n, v) {
+  if (this.order.indexOf(n) < 0) this.order.push(n);
+  this.vars[n] = v;
+};
+Machine.prototype.get = function (n, line) {
+  if (!(n in this.vars)) err('Η μεταβλητή «' + n + '» δεν έχει πάρει τιμή.', line);
+  return this.vars[n];
+};
+
+Machine.prototype.ev = function (e) {
+  var self = this;
+  switch (e.k) {
+    case 'num': case 'str': case 'bool': return e.v;
+    case 'var': return this.get(e.name, e.line);
+    case 'neg': {
+      var x = this.ev(e.a);
+      if (typeof x !== 'number') err('Το πρόσημο − εφαρμόζεται μόνο σε αριθμούς.', e.line);
+      return -x;
+    }
+    case 'not': {
+      var b = this.ev(e.a);
+      if (typeof b !== 'boolean') err('Ο τελεστής «όχι» εφαρμόζεται μόνο σε λογικές εκφράσεις.', e.line);
+      return !b;
+    }
+    case 'and': case 'or': {
+      var l = this.ev(e.a), r = this.ev(e.b);
+      if (typeof l !== 'boolean' || typeof r !== 'boolean')
+        err('Οι τελεστές «και» / «ή» συνδυάζονται μόνο με λογικές εκφράσεις.', e.line);
+      return e.k === 'and' ? (l && r) : (l || r);
+    }
+    case 'rel': {
+      var a = this.ev(e.a), b2 = this.ev(e.b);
+      if (typeof a !== typeof b2)
+        err('Δεν συγκρίνονται τιμές διαφορετικού τύπου.', e.line);
+      switch (e.op) {
+        case '=': return a === b2;
+        case '<>': return a !== b2;
+        case '<': return a < b2;
+        case '>': return a > b2;
+        case '<=': return a <= b2;
+        case '>=': return a >= b2;
+      }
+      break;
+    }
+    case 'bin': {
+      var x1 = this.ev(e.a), y1 = this.ev(e.b);
+      if (e.op === '+' && (typeof x1 === 'string' || typeof y1 === 'string')) return String(x1) + String(y1);
+      if (typeof x1 !== 'number' || typeof y1 !== 'number')
+        err('Οι αριθμητικοί τελεστές θέλουν αριθμητικές εκφράσεις.', e.line);
+      switch (e.op) {
+        case '+': return x1 + y1;
+        case '-': return x1 - y1;
+        case '*': return x1 * y1;
+        case '/': if (y1 === 0) err('Διαίρεση με το μηδέν.', e.line); return x1 / y1;
+        case '^': return Math.pow(x1, y1);
+        case 'div':
+          if (y1 === 0) err('Διαίρεση με το μηδέν.', e.line);
+          if (x1 % 1 !== 0 || y1 % 1 !== 0) err('Οι τελεστέοι του div πρέπει να είναι ακέραιοι.', e.line);
+          return Math.trunc(x1 / y1);
+        case 'mod':
+          if (y1 === 0) err('Διαίρεση με το μηδέν.', e.line);
+          if (x1 % 1 !== 0 || y1 % 1 !== 0) err('Οι τελεστέοι του mod πρέπει να είναι ακέραιοι.', e.line);
+          return x1 % y1;
+      }
+      break;
+    }
+    case 'call': {
+      var v = this.ev(e.a);
+      if (typeof v !== 'number') err('Η συνάρτηση ' + e.f + ' θέλει αριθμητικό όρισμα.', e.line);
+      try { return FUNCS[e.f](v); } catch (m) { err(String(m), e.line); }
+      break;
+    }
+  }
+  err('Δεν μπόρεσα να υπολογίσω την έκφραση.', e.line);
+};
+
+Machine.prototype.rec = function (r) {
+  if (this.trace.length < 400) this.trace.push(r);
+  else if (this.trace.length === 400) { this.trace.push({ line: '…', note: 'ο πίνακας κόπηκε στις 400 γραμμές' }); }
+};
+
+Machine.prototype.noteCond = function (src) {
+  if (src && this.conds.indexOf(src) < 0) this.conds.push(src);
+};
+
+Machine.prototype.run = function* () {
+  var cs = this.ast.consts || [];
+  for (var i = 0; i < cs.length; i++) this.set(cs[i].name, this.ev(cs[i].expr));
+  yield* this.blk(this.ast.body);
+  this.done = true;
+};
+
+Machine.prototype.blk = function* (b) {
+  for (var i = 0; i < b.length; i++) yield* this.st(b[i]);
+};
+
+Machine.prototype.st = function* (s) {
+  if (++this.steps > 300000) err('Ο αλγόριθμος δεν τερματίζει (ατέρμονας βρόχος;).', s.line);
+  switch (s.k) {
+    case 'assign': {
+      var v = this.ev(s.expr);
+      this.set(s.name, v);
+      var a = {}; a[s.name] = v;
+      this.rec({ line: s.line, assigns: a });
+      yield s.line; return;
+    }
+    case 'read': {
+      var as = {};
+      for (var i = 0; i < s.names.length; i++) {
+        if (!this.inputs.length)
+          err('Τελείωσαν τα δεδομένα εισόδου. Πρόσθεσε τιμές στο πλαίσιο «Δεδομένα εισόδου».', s.line);
+        var raw = this.inputs.shift().trim();
+        var val;
+        if (/^-?\d+(\.\d+)?$/.test(raw)) val = parseFloat(raw);
+        else if (KW(raw) === 'ΑΛΗΘΗΣ') val = true;
+        else if (KW(raw) === 'ΨΕΥΔΗΣ') val = false;
+        else val = raw.replace(/^['"«]|['"»]$/g, '');
+        this.set(s.names[i], val); as[s.names[i]] = val;
+      }
+      this.rec({ line: s.line, assigns: as, read: true });
+      yield s.line; return;
+    }
+    case 'print': {
+      var parts = [];
+      for (var j = 0; j < s.args.length; j++) parts.push(fmt(this.ev(s.args[j])));
+      var text = parts.join(' ');
+      this.out.push(text);
+      this.rec({ line: s.line, out: text });
+      yield s.line; return;
+    }
+    case 'if': {
+      for (var m = 0; m < s.arms.length; m++) {
+        var arm = s.arms[m];
+        var c = this.ev(arm.cond);
+        if (typeof c !== 'boolean') err('Η συνθήκη πρέπει να είναι λογική έκφραση.', arm.line);
+        this.noteCond(arm.condSrc);
+        var cr = {}; cr[arm.condSrc] = c;
+        this.rec({ line: arm.line, conds: cr });
+        yield arm.line;
+        if (c) { yield* this.blk(arm.body); return; }
+      }
+      if (s.els) yield* this.blk(s.els);
+      return;
+    }
+    case 'while': {
+      for (;;) {
+        var cw = this.ev(s.cond);
+        if (typeof cw !== 'boolean') err('Η συνθήκη πρέπει να είναι λογική έκφραση.', s.line);
+        this.noteCond(s.condSrc);
+        var cw2 = {}; cw2[s.condSrc] = cw;
+        this.rec({ line: s.line, conds: cw2 });
+        yield s.line;
+        if (!cw) return;
+        yield* this.blk(s.body);
+        if (++this.steps > 300000) err('Ο βρόχος δεν τερματίζει.', s.line);
+      }
+    }
+    case 'repeat': {
+      for (;;) {
+        yield* this.blk(s.body);
+        var cr2 = this.ev(s.cond);
+        if (typeof cr2 !== 'boolean') err('Η συνθήκη πρέπει να είναι λογική έκφραση.', s.condLine);
+        this.noteCond(s.condSrc);
+        var o = {}; o[s.condSrc] = cr2;
+        this.rec({ line: s.condLine, conds: o });
+        yield s.condLine;
+        if (cr2) return;
+        if (++this.steps > 300000) err('Ο βρόχος δεν τερματίζει.', s.line);
+      }
+    }
+    case 'for': {
+      var a1 = this.ev(s.from), b1 = this.ev(s.to);
+      var st = s.step ? this.ev(s.step) : 1;
+      if (typeof a1 !== 'number' || typeof b1 !== 'number' || typeof st !== 'number')
+        err('Η εντολή Για θέλει αριθμητικές τιμές.', s.line);
+      var cur = a1, guard = 0;
+      for (;;) {
+        if (st > 0 && cur > b1 + 1e-9) break;
+        if (st < 0 && cur < b1 - 1e-9) break;
+        if (st === 0 && a1 > b1) break;
+        this.set(s.v, Math.round(cur * 1e9) / 1e9);
+        var af = {}; af[s.v] = this.vars[s.v];
+        this.rec({ line: s.line, assigns: af });
+        yield s.line;
+        yield* this.blk(s.body);
+        cur += st;
+        if (++guard > 300000) err('Ο βρόχος Για δεν τερματίζει.', s.line);
+      }
+      return;
+    }
+  }
+};
+
+Machine.prototype.step = function () {
+  if (this.done || this.error) return false;
+  try {
+    var r = this.gen.next();
+    if (r.done) this.done = true;
+    return !this.done;
+  } catch (e) {
+    this.error = (e instanceof GErr) ? e.toString() : String(e && e.msg ? e.msg : e);
+    this.done = true;
+    return false;
+  }
+};
+Machine.prototype.runAll = function () { var g = 0; while (this.step()) { if (++g > 400000) break; } };
+
+/* ---------- διεπαφή ---------- */
+var SNIPPETS = [
+  ['Αλγόριθμος', 'Αλγόριθμος Όνομα\n\nΤέλος Όνομα'],
+  ['Διάβασε', 'Διάβασε α'],
+  ['Εμφάνισε', 'Εμφάνισε α'],
+  ['←', ' ← '],
+  ['Αν … τότε', 'Αν συνθήκη τότε\n    \nΤέλος_αν'],
+  ['Αν … αλλιώς', 'Αν συνθήκη τότε\n    \nαλλιώς\n    \nΤέλος_αν'],
+  ['αλλιώς_αν', 'αλλιώς_αν συνθήκη τότε\n    '],
+  ['Όσο', 'Όσο συνθήκη επανάλαβε\n    \nΤέλος_επανάληψης'],
+  ['Για', 'Για i από 1 μέχρι 10\n    \nΤέλος_επανάληψης'],
+  ['Επανάλαβε', 'Επανάλαβε\n    \nΜέχρις_ότου συνθήκη'],
+  ['! σχόλιο', '! '],
+  ['ΠΡΟΓΡΑΜΜΑ (ΓΛΩΣΣΑ)', 'ΠΡΟΓΡΑΜΜΑ Όνομα\nΜΕΤΑΒΛΗΤΕΣ\n    ΑΚΕΡΑΙΕΣ: α\nΑΡΧΗ\n    \nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ']
+];
+var SYMBOLS = ['≥', '≤', '≠', 'και', 'ή', 'όχι', 'div', 'mod', 'Α_Τ(', 'Α_Μ(', 'Τ_Ρ('];
+
+function el(tag, cls, txt) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (txt != null) e.textContent = txt;
+  return e;
+}
+
+function insertAt(ta, text) {
+  var s = ta.selectionStart, e = ta.selectionEnd, v = ta.value;
+  ta.value = v.slice(0, s) + text + v.slice(e);
+  var pos = s + text.length;
+  var nl = text.indexOf('\n');
+  if (nl >= 0 && /Τέλος|Μέχρις/.test(text)) pos = s + text.indexOf('\n    ') + 5;
+  ta.focus();
+  ta.setSelectionRange(pos, pos);
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function buildOne(wrap) {
+  var start, seedIn = wrap.getAttribute('data-inputs') || '';
+  if (wrap.dataset.seed != null) {
+    start = wrap.dataset.seed;                       // ξαναχτίσιμο από αποθηκευμένο αρχείο
+  } else {
+    var seed = wrap.querySelector('script[type="text/glossa"]');
+    start = seed ? seed.textContent.replace(/^\n/, '').replace(/\s+$/, '') : '';
+    wrap.dataset.seed = start;
+  }
+  var id = wrap.getAttribute('data-field') || ('glossa' + Math.random().toString(36).slice(2, 8));
+
+  wrap.innerHTML = '';
+
+  var bar = el('div', 'gl-toolbar');
+  SNIPPETS.forEach(function (s) {
+    var b = el('button', 'gl-chip', s[0]); b.type = 'button';
+    b.addEventListener('click', function () { insertAt(code, s[1]); });
+    bar.appendChild(b);
+  });
+  var bar2 = el('div', 'gl-toolbar gl-sym');
+  SYMBOLS.forEach(function (s) {
+    var b = el('button', 'gl-chip', s); b.type = 'button';
+    b.addEventListener('click', function () { insertAt(code, s === 'και' || s === 'ή' || s === 'όχι' || s === 'div' || s === 'mod' ? ' ' + s + ' ' : s); });
+    bar2.appendChild(b);
+  });
+
+  var grid = el('div', 'gl-grid');
+
+  var left = el('div', 'gl-left');
+  var lab1 = el('label', 'gl-lab', 'Ο αλγόριθμός σου');
+  var code = el('textarea', 'gl-code');
+  code.value = start;
+  code.setAttribute('data-field', id + '_code');
+  code.setAttribute('spellcheck', 'false');
+  code.rows = Math.max(10, start.split('\n').length + 3);
+  left.appendChild(lab1); left.appendChild(code);
+
+  var right = el('div', 'gl-right');
+  var lab2 = el('label', 'gl-lab', 'Δεδομένα εισόδου (μία τιμή ανά γραμμή)');
+  var inp = el('textarea', 'gl-in');
+  inp.value = seedIn;
+  inp.setAttribute('data-field', id + '_in');
+  inp.rows = 5;
+  right.appendChild(lab2); right.appendChild(inp);
+
+  var lab3 = el('label', 'gl-lab', 'Έξοδος');
+  var out = el('pre', 'gl-out');
+  right.appendChild(lab3); right.appendChild(out);
+
+  grid.appendChild(left); grid.appendChild(right);
+
+  var btns = el('div', 'gl-btns');
+  var bRun = el('button', 'gl-go', '▶ Εκτέλεση'); bRun.type = 'button';
+  var bStep = el('button', null, '⏭ Βήμα-βήμα'); bStep.type = 'button';
+  var bReset = el('button', null, '⟲ Επαναφορά'); bReset.type = 'button';
+  btns.appendChild(bRun); btns.appendChild(bStep); btns.appendChild(bReset);
+
+  var msg = el('div', 'gl-msg');
+  var lab4 = el('div', 'gl-lab gl-tablab', 'Πίνακας τιμών');
+  var tblBox = el('div', 'gl-tablebox');
+
+  wrap.appendChild(bar); wrap.appendChild(bar2); wrap.appendChild(grid);
+  wrap.appendChild(btns); wrap.appendChild(msg);
+  wrap.appendChild(lab4); wrap.appendChild(tblBox);
+
+  var M = null;
+
+  function inputs() {
+    return inp.value.split('\n').filter(function (x) { return x.trim() !== ''; });
+  }
+  function fresh() {
+    try { M = new Machine(code.value, inputs()); msg.className = 'gl-msg'; msg.textContent = ''; }
+    catch (e) { M = null; showErr((e instanceof GErr) ? e.toString() : String(e && e.msg ? e.msg : e)); }
+    return M;
+  }
+  function showErr(t) {
+    msg.className = 'gl-msg gl-err';
+    msg.textContent = '✗ ' + t;
+  }
+  function paint() {
+    if (!M) return;
+    out.textContent = M.out.join('\n');
+    renderTable(M, tblBox);
+    if (M.error) showErr(M.error);
+    else if (M.done) { msg.className = 'gl-msg gl-ok'; msg.textContent = '✓ Η εκτέλεση ολοκληρώθηκε.'; }
+    else { msg.className = 'gl-msg'; msg.textContent = 'Βήμα ' + M.trace.length + ' — πάτησε ξανά «Βήμα-βήμα».'; }
+  }
+  bRun.addEventListener('click', function () { if (fresh()) { M.runAll(); paint(); } });
+  bStep.addEventListener('click', function () {
+    if (!M || M.done) { if (!fresh()) return; }
+    M.step(); paint();
+  });
+  bReset.addEventListener('click', function () {
+    M = null; out.textContent = ''; tblBox.innerHTML = '';
+    msg.className = 'gl-msg'; msg.textContent = '';
+  });
+  code.addEventListener('input', function () { M = null; });
+  inp.addEventListener('input', function () { M = null; });
+}
+
+function renderTable(M, box) {
+  box.innerHTML = '';
+  if (!M.trace.length) return;
+  var cols = ['Αριθμός εντολής'].concat(M.conds).concat(M.order).concat(['Έξοδος']);
+  var t = el('table', 'gl-table');
+  var thead = el('thead'), tr = el('tr');
+  cols.forEach(function (c) { tr.appendChild(el('th', null, c)); });
+  thead.appendChild(tr); t.appendChild(thead);
+  var tb = el('tbody');
+  M.trace.forEach(function (r) {
+    var row = el('tr');
+    row.appendChild(el('td', 'gl-ln', r.note ? '…' : String(r.line)));
+    M.conds.forEach(function (c) {
+      row.appendChild(el('td', null, r.conds && (c in r.conds) ? (r.conds[c] ? 'Αληθής' : 'Ψευδής') : ''));
+    });
+    M.order.forEach(function (v) {
+      row.appendChild(el('td', null, r.assigns && (v in r.assigns) ? fmt(r.assigns[v]) : ''));
+    });
+    row.appendChild(el('td', null, r.out != null ? r.out : (r.note || '')));
+    tb.appendChild(row);
+  });
+  t.appendChild(tb);
+  box.appendChild(t);
+}
+
+window.GLOSSA_INIT = function () {
+  var ws = document.querySelectorAll('.glossa-interpreter-wrapper');
+  for (var i = 0; i < ws.length; i++) buildOne(ws[i]);
+};
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.GLOSSA_INIT);
+else window.GLOSSA_INIT();
+
+})();
+
+</script>
+<script>
+/* ============ αντιστοίχιση με σύρσιμο (drag & drop) ============ */
+(function () {
+'use strict';
+
+function chipsOf(root) { return Array.prototype.slice.call(root.querySelectorAll('.chip')); }
+
+function build(dnd) {
+  var pool = dnd.querySelector('.dnd-pool');
+  var rows = Array.prototype.slice.call(dnd.querySelectorAll('.dnd-row'));
+  var store = dnd.querySelector('input.dnd-store');
+  if (!store) {
+    store = document.createElement('input');
+    store.type = 'hidden';
+    store.className = 'dnd-store';
+    store.setAttribute('data-field', dnd.getAttribute('data-field') || ('dnd' + Math.random().toString(36).slice(2, 7)));
+    dnd.appendChild(store);
+  }
+  var msg = dnd.querySelector('.dnd-msg');
+  if (!msg) { msg = document.createElement('div'); msg.className = 'dnd-msg'; dnd.appendChild(msg); }
+
+  var sel = null;
+  function select(ch) {
+    chipsOf(dnd).forEach(function (c) { c.classList.remove('sel'); });
+    sel = ch; if (ch) ch.classList.add('sel');
+  }
+  function place(ch, target) {
+    if (!ch) return;
+    if (target.classList.contains('dnd-slot')) {
+      var cur = target.querySelector('.chip');
+      if (cur && cur !== ch) pool.appendChild(cur);
+      target.appendChild(ch);
+    } else {
+      pool.appendChild(ch);
+    }
+    select(null); save(); msg.textContent = ''; msg.className = 'dnd-msg';
+  }
+  function save() {
+    var d = {};
+    rows.forEach(function (r) {
+      var slot = r.querySelector('.dnd-slot');
+      var c = slot.querySelector('.chip');
+      slot.classList.toggle('filled', !!c);
+      d[r.getAttribute('data-key')] = c ? c.getAttribute('data-v') : '';
+    });
+    store.value = JSON.stringify(d);
+  }
+
+  chipsOf(dnd).forEach(function (ch) {
+    ch.setAttribute('draggable', 'true');
+    ch.addEventListener('dragstart', function (e) {
+      sel = ch; e.dataTransfer.setData('text/plain', ch.getAttribute('data-v'));
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    ch.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (sel && sel !== ch && ch.parentNode.classList.contains('dnd-slot')) { place(sel, ch.parentNode); return; }
+      select(sel === ch ? null : ch);
+    });
+  });
+
+  var targets = rows.map(function (r) { return r.querySelector('.dnd-slot'); }).concat([pool]);
+  targets.forEach(function (t) {
+    t.addEventListener('dragover', function (e) { e.preventDefault(); t.classList.add('over'); });
+    t.addEventListener('dragleave', function () { t.classList.remove('over'); });
+    t.addEventListener('drop', function (e) { e.preventDefault(); t.classList.remove('over'); place(sel, t); });
+    t.addEventListener('click', function () { if (sel) place(sel, t); });
+  });
+
+  var tools = dnd.querySelector('.dnd-tools');
+  if (tools) {
+    var bChk = tools.querySelector('[data-act="check"]');
+    var bClr = tools.querySelector('[data-act="clear"]');
+    if (bChk) bChk.addEventListener('click', function () {
+      var ok = 0, filled = 0;
+      rows.forEach(function (r) {
+        var c = r.querySelector('.dnd-slot .chip');
+        if (c) { filled++; if (c.getAttribute('data-v') === r.getAttribute('data-answer')) ok++; }
+      });
+      if (filled < rows.length) {
+        msg.className = 'dnd-msg'; msg.textContent = 'Συμπλήρωσε πρώτα όλες τις γραμμές (' + filled + '/' + rows.length + ').';
+      } else if (ok === rows.length) {
+        msg.className = 'dnd-msg ok'; msg.textContent = '✓ Όλα σωστά (' + ok + '/' + rows.length + ').';
+      } else {
+        msg.className = 'dnd-msg bad'; msg.textContent = 'Σωστά ' + ok + ' από ' + rows.length + '. Ξαναδές τα υπόλοιπα.';
+      }
+    });
+    if (bClr) bClr.addEventListener('click', function () {
+      chipsOf(dnd).forEach(function (c) { pool.appendChild(c); });
+      select(null); save(); msg.textContent = ''; msg.className = 'dnd-msg';
+    });
+  }
+  save();
+  dnd._restore = function () {
+    var d;
+    try { d = JSON.parse(store.value || '{}'); } catch (e) { return; }
+    rows.forEach(function (r) {
+      var want = d[r.getAttribute('data-key')];
+      var slot = r.querySelector('.dnd-slot');
+      var cur = slot.querySelector('.chip');
+      if (cur) pool.appendChild(cur);
+      if (!want) return;
+      var ch = chipsOf(dnd).filter(function (c) { return c.getAttribute('data-v') === want; })[0];
+      if (ch) slot.appendChild(ch);
+    });
+    save();
+  };
+}
+
+window.DND_INIT = function () {
+  var ds = document.querySelectorAll('.dnd');
+  for (var i = 0; i < ds.length; i++) build(ds[i]);
+};
+window.DND_SYNC = function () {
+  var ds = document.querySelectorAll('.dnd');
+  for (var i = 0; i < ds.length; i++) if (ds[i]._restore) ds[i]._restore();
+};
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.DND_INIT);
+else window.DND_INIT();
+})();
+
+
+/* ============ αποθήκευση · συνέχεια · εκτύπωση ============ */
+(function () {
+  var FILE_CODE = "O45";
+  var st = document.getElementById("status");
+
+  function fields() { return Array.prototype.slice.call(document.querySelectorAll("[data-field]")); }
+  function say(m) { st.textContent = m; }
+
+  function apply(data) {
+    var n = 0;
+    fields().forEach(function (el) {
+      if (Object.prototype.hasOwnProperty.call(data, el.dataset.field)) { el.value = data[el.dataset.field]; n++; }
+    });
+    if (window.DND_SYNC) window.DND_SYNC();
+    return n;
+  }
+
+  function loadEmbedded() {
+    var embedded = document.getElementById("saved-state");
+    if (embedded) { try { apply(JSON.parse(embedded.textContent)); } catch (e) { } }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadEmbedded);
+  else loadEmbedded();
+
+  var GR2LAT = {"α":"a","ά":"a","β":"v","γ":"g","δ":"d","ε":"e","έ":"e","ζ":"z",
+    "η":"i","ή":"i","θ":"th","ι":"i","ί":"i","ϊ":"i","ΐ":"i","κ":"k","λ":"l","μ":"m",
+    "ν":"n","ξ":"x","ο":"o","ό":"o","π":"p","ρ":"r","σ":"s","ς":"s","τ":"t","υ":"y",
+    "ύ":"y","ϋ":"y","ΰ":"y","φ":"f","χ":"ch","ψ":"ps","ω":"o","ώ":"o"};
+
+  function slug(s) {
+    s = (s || "").trim().toLowerCase();
+    var out = "";
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (GR2LAT[ch]) out += GR2LAT[ch];
+      else if (/[a-z0-9]/.test(ch)) out += ch;
+      else if (/[\s_-]/.test(ch)) out += "_";
+    }
+    return out.replace(/_+/g, "_").replace(/^_|_$/g, "").slice(0, 24);
+  }
+  function buildName(d) {
+    var parts = [d.m1, d.m2, d.m3].map(slug).filter(Boolean);
+    var tm = slug(d.tmima);
+    return FILE_CODE + "_" + (tm ? tm + "_" : "") + (parts.length ? parts.join("-") : "omada") + ".html";
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", function () {
+    var data = {};
+    fields().forEach(function (el) { data[el.dataset.field] = el.value; });
+    data._ora = FILE_CODE;
+    data._titlos = document.title;
+    data._saved = new Date().toISOString();
+
+    if (!(data.m1 || "").trim()) {
+      say("Συμπληρώστε πρώτα τουλάχιστον το 1ο μέλος της ομάδας.");
+      document.getElementById("m1").focus();
+      return;
+    }
+
+    var clone = document.documentElement.cloneNode(true);
+    var old = clone.querySelector("#saved-state");
+    if (old) old.parentNode.removeChild(old);
+    var s = document.createElement("script");
+    s.id = "saved-state"; s.type = "application/json";
+    s.textContent = JSON.stringify(data);
+    clone.querySelector("head").appendChild(s);
+
+    var blob = new Blob(["<!DOCTYPE html>\n" + clone.outerHTML], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = buildName(data);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+
+    say("Αποθηκεύτηκε στις " + new Date().toLocaleTimeString("el-GR") + ".");
+  });
+
+  function openDetails() {
+    var ds = document.querySelectorAll("details");
+    for (var i = 0; i < ds.length; i++) ds[i].open = true;
+  }
+  window.addEventListener("beforeprint", openDetails);
+  document.getElementById("printBtn").addEventListener("click", function () { openDetails(); window.print(); });
+
+  var fileIn = document.getElementById("fileIn");
+  document.getElementById("loadBtn").addEventListener("click", function () { fileIn.click(); });
+
+  fileIn.addEventListener("change", function () {
+    var f = fileIn.files && fileIn.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var doc = new DOMParser().parseFromString(String(r.result), "text/html");
+        var tag = doc.getElementById("saved-state");
+        if (!tag) { say("Το αρχείο δεν περιέχει αποθηκευμένες απαντήσεις."); return; }
+        say("Φορτώθηκαν οι απαντήσεις σας (" + apply(JSON.parse(tag.textContent)) + " πεδία).");
+      } catch (e) {
+        say("Δεν μπόρεσα να διαβάσω το αρχείο. Βεβαιωθείτε ότι είναι το αποθηκευμένο φύλλο του μαθήματος.");
+      }
+      fileIn.value = "";
+    };
+    r.readAsText(f, "utf-8");
+  });
+})();
+
+</script>
+<script>
+/* Αυτοέλεγχος για λίστες επιλογής (.quiz) + εκτυπώσιμες επιλογές */
+(function () {
+  function buildPrint() {
+    document.querySelectorAll('select.qsel').forEach(function (s) {
+      var box = s.nextElementSibling;
+      if (!box || !box.classList.contains('popt')) {
+        box = document.createElement('div'); box.className = 'popt' + (s.options.length <= 3 ? ' tight' : '');
+        s.parentNode.insertBefore(box, s.nextSibling);
+      }
+      box.innerHTML = '';
+      Array.prototype.forEach.call(s.options, function (o) {
+        if (!o.value) return;
+        var sp = document.createElement('span');
+        sp.textContent = (s.value === o.value ? '\u2612 ' : '\u2610 ') + o.textContent;
+        box.appendChild(sp);
+      });
+    });
+  }
+  buildPrint();
+  window.addEventListener('beforeprint', buildPrint);
+  function msgOf(q) { var m = q.querySelector(':scope > .dnd-msg') || q.querySelector('.dnd-msg');
+    if (!m) { m = document.createElement('div'); m.className = 'dnd-msg'; q.appendChild(m); } return m; }
+  function norm(v) { return String(v).trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.').replace(/["«»']/g, ''); }
+  function reset(q) { q.querySelectorAll('select.qsel, input.qin').forEach(function (s) { s.classList.remove('right', 'wrong'); });
+    var m = msgOf(q); m.textContent = ''; m.className = 'dnd-msg'; }
+  document.querySelectorAll('.quiz').forEach(function (q) {
+    var sels = Array.prototype.slice.call(q.querySelectorAll('select.qsel[data-answer], input.qin[data-answer]'));
+    if (!sels.length) return;
+    sels.forEach(function (s) { s.addEventListener(s.tagName === 'SELECT' ? 'change' : 'input', function () { reset(q); }); });
+    var bc = q.querySelector('[data-qact="check"]'), bx = q.querySelector('[data-qact="clear"]');
+    if (bc) bc.addEventListener('click', function () {
+      var m = msgOf(q), filled = 0, ok = 0;
+      sels.forEach(function (s) { s.classList.remove('right', 'wrong'); if (s.value) filled++; });
+      if (filled < sels.length) { m.className = 'dnd-msg'; m.textContent = 'Συμπλήρωσε πρώτα όλες τις απαντήσεις (' + filled + '/' + sels.length + ').'; return; }
+      sels.forEach(function (s) { var ans = s.getAttribute('data-answer').split('|').map(norm); var r = ans.indexOf(norm(s.value)) >= 0; if (r) ok++; s.classList.add(r ? 'right' : 'wrong'); });
+      if (ok === sels.length) { m.className = 'dnd-msg ok'; m.textContent = '\u2713 Όλα σωστά (' + ok + '/' + sels.length + ').'; }
+      else { m.className = 'dnd-msg bad'; m.textContent = 'Σωστά ' + ok + ' από ' + sels.length + '. Ξαναδές όσα είναι με κόκκινο.'; }
+    });
+    if (bx) bx.addEventListener('click', function () { sels.forEach(function (s) { s.value = ''; }); reset(q); });
+  });
+})();
+</script>
+</body>
+</html>

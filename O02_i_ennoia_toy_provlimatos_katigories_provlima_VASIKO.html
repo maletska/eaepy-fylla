@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ω02 — Η έννοια του προβλήματος · Κατηγορίες προβλημάτων</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --card:#fff; --ink:#1b1b1a; --muted:#5f5f5a;
+    --line:#e0e0da; --accent:#0b6b5e; --accent-soft:#e6f2f0;
+    --warn:#a8600a; --warn-soft:#fdf2e2;
+    --book:#2f4858; --book-soft:#eef3f6;
+    --opt:#6b4fa8; --opt-soft:#f1ecfa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 "Segoe UI",Roboto,-apple-system,sans-serif;padding:0 16px 64px}
+  .wrap{max-width:900px;margin:0 auto}
+
+  header.top{padding-block:28px 20px;border-bottom:3px solid var(--accent)}
+  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);font-weight:700}
+  h1{font-size:clamp(22px,4.2vw,31px);margin:6px 0 4px;line-height:1.25}
+  .sub{color:var(--muted);font-size:15px}
+
+  .ident{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin:20px 0}
+  .ident h2{font-size:14px;margin:0 0 12px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--muted)}
+  .grid3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(175px,1fr))}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px}
+  input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:#fff;
+    border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+  textarea{min-height:72px;resize:vertical;line-height:1.55}
+  textarea.code{font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14.5px;line-height:1.7;min-height:175px}
+  input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+
+  .phase{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:20px;margin:18px 0}
+  .phase > h2{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 12px;font-size:19px}
+  .num{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;
+    background:var(--accent);color:#fff;border-radius:50%;font-size:14px;font-weight:700}
+
+  h3{font-size:16px;margin:18px 0 6px}
+  h4{font-size:14.5px;margin:14px 0 4px;color:var(--muted)}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 12px;padding-left:22px}
+  li{margin-bottom:4px}
+
+  .goals{background:var(--accent-soft);border-radius:10px;padding:14px 18px;margin:16px 0}
+  .goals h2{margin:0 0 8px;font-size:14px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--accent)}
+  .goals ul{margin:0;padding-left:20px}
+
+  /* ---------- αυτούσιο κείμενο βιβλίου ---------- */
+  .book{background:var(--book-soft);border:1px solid #cfdbe3;border-left:5px solid var(--book);
+    border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+  .book > .src{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--book);font-weight:700;margin-bottom:8px}
+  .book p:last-child,.book ul:last-child{margin-bottom:0}
+  .defbox{background:#fff;border:1px dashed var(--book);border-radius:8px;
+    padding:10px 14px;margin:10px 0}
+  .defbox p:last-child{margin-bottom:0}
+
+  pre.algo{background:#1d2424;color:#e8f0ee;border-radius:10px;padding:15px 18px;
+    overflow-x:auto;font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14.5px;line-height:1.75;margin:12px 0;white-space:pre}
+  pre.algo b{color:#7fd6c2;font-weight:700}
+  pre.algo i{color:#9fb0ad;font-style:normal}
+  code{background:#ecebe6;padding:1px 6px;border-radius:5px;
+    font-family:"Cascadia Mono",Consolas,monospace;font-size:14.5px}
+
+  .note{background:var(--warn-soft);border-left:4px solid var(--warn);
+    padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;font-size:15px}
+  .task{border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:15px 18px;margin:16px 0;background:#fcfcfb}
+  .task h3{margin:0 0 8px;font-size:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+  .task.optional{border-left-color:var(--opt);background:#fdfcff}
+  .tag{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:2px 9px;border-radius:20px;white-space:nowrap}
+  .tag.opt{background:var(--opt-soft);color:var(--opt);border:1px solid #d6c9ef}
+  .tag.adv{background:#fdeee8;color:#a8400a;border:1px solid #f1cdbe}
+  .tag.core{background:var(--accent-soft);color:var(--accent);border:1px solid #bcdcd6}
+  .task.advanced{border-left-color:var(--opt)}
+  .advnote{background:var(--opt-soft);border-left-color:var(--opt)}
+  details.recap{border:1px solid var(--line);border-radius:12px;background:var(--card);
+    padding:0 18px;margin:18px 0}
+  details.recap > summary{cursor:pointer;font-weight:700;color:var(--accent);
+    padding:14px 0;list-style:revert}
+  details.recap[open] > summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+  details.recap > *:last-child{margin-bottom:14px}
+  .field{margin:12px 0}
+  .hint{font-size:13.5px;color:var(--muted);margin:4px 0 0}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f0f0ec;font-size:14px}
+  td input[type=text]{border:none;background:transparent;padding:2px}
+  .scroll{overflow-x:auto}
+
+  /* ---------- drag & drop αντιστοίχισης ---------- */
+  .dnd{margin:12px 0}
+  .dnd-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#f2f2ee;
+    border:1px dashed var(--line);border-radius:10px;min-height:54px;align-content:flex-start}
+  .dnd-pool.over,.dnd-slot.over{outline:2px dashed var(--accent);outline-offset:2px;background:var(--accent-soft)}
+  .chip{display:inline-block;background:#fff;border:1px solid var(--accent);color:var(--accent);
+    border-radius:20px;padding:6px 14px;font-size:14.5px;font-weight:600;cursor:grab;
+    user-select:none;touch-action:none}
+  .chip:active{cursor:grabbing}
+  .chip.sel{background:var(--accent);color:#fff}
+  .dnd-rows{display:grid;gap:8px;margin-top:12px}
+  .dnd-row{display:grid;grid-template-columns:1fr minmax(150px,210px);gap:10px;align-items:center;
+    background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .dnd-slot{min-height:42px;border:1px dashed var(--line);border-radius:20px;
+    display:grid;place-items:center;padding:4px;background:#fafaf8;font-size:14px;color:var(--muted)}
+  .dnd-slot::before{content:"σύρε εδώ";color:var(--muted);font-size:13.5px}
+  .dnd-slot.filled::before{content:none}
+  .dnd-slot .chip{cursor:grab}
+  .dnd-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .dnd-tools button{font-size:14px;padding:7px 14px;background:#fff;color:var(--accent);
+    border:2px solid var(--accent);border-radius:9px}
+  .dnd-msg{font-size:14px;font-weight:600;margin-top:8px;min-height:20px}
+  .dnd-msg.ok{color:var(--accent)} .dnd-msg.bad{color:#a33}
+  /* ---------- αυτοέλεγχος λιστών επιλογής ---------- */
+  select.qsel{width:100%;padding:8px;border-radius:8px;border:1px solid var(--line);font:inherit;background:#fff;color:var(--ink)}
+  td select.qsel{padding:4px}
+  .popt{display:none}
+  select.qsel.right{border:2px solid var(--accent);background:var(--accent-soft)}
+  select.qsel.wrong{border:2px solid #a33;background:#fbeaea}
+  input.qin.right{outline:2px solid var(--accent);background:var(--accent-soft)}
+  input.qin.wrong{outline:2px solid #a33;background:#fbeaea}
+  @media (max-width:600px){
+    .bar{position:static;padding:12px 0}
+    .barcard{padding:12px}
+    .btns button{flex:1 1 100%;padding:10px 14px}
+    .dnd-row{grid-template-columns:1fr}
+  }
+
+  /* ---------- φύλλο προχωρημένων ---------- */
+  .lvl{display:inline-block;margin-left:8px;font-size:11.5px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;padding:2px 10px;border-radius:20px;
+    background:#fdeee8;color:#a8400a;border:1px solid #f1cdbe;vertical-align:middle}
+  body.adv-sheet header.top{border-bottom-color:#a8400a}
+  body.adv-sheet .kicker{color:#a8400a}
+  body.adv-sheet .num{background:#a8400a}
+  .advnote{background:#fdeee8;border-left-color:#a8400a}
+  details.theoryfold{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:10px 18px;margin:18px 0}
+  details.theoryfold > summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--book);
+    padding:8px 0;list-style:none}
+  details.theoryfold > summary::-webkit-details-marker{display:none}
+  details.theoryfold > summary::before{content:"▸ ";color:var(--book)}
+  details.theoryfold[open] > summary::before{content:"▾ "}
+
+  /* κενές γραμμές: μόνο στην εκτύπωση */
+  .print-only-lines{display:none}
+
+  .bar{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 22%);
+    padding:24px 0 12px;margin-top:28px}
+  .barcard{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:16px 18px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:11px 20px;cursor:pointer}
+  #saveBtn{background:var(--accent);color:#fff}
+  #saveBtn:hover{background:#08574c}
+  #loadBtn,#printBtn{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+  #loadBtn:hover,#printBtn:hover{background:var(--accent-soft)}
+  button:focus-visible{outline:3px solid #08574c;outline-offset:2px}
+  .bartext{font-size:14px;color:var(--muted)}
+  #status{font-size:14px;font-weight:600;color:var(--accent);margin-top:8px;min-height:20px}
+
+  footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--muted)}
+
+  /* ================= ΕΚΤΥΠΩΣΗ ================= */
+  @media print{
+    @page{ size:A4; margin:14mm 13mm; }
+    body{background:#fff;padding:0;font-size:11.5pt;line-height:1.5}
+    .wrap{max-width:none}
+    .bar,.hint,.dnd-tools,.dnd-msg{display:none !important}
+    /* στο φύλλο προχωρημένων η υπενθύμιση θεωρίας δεν τυπώνεται */
+    details.recap{display:none !important}
+
+    header.top{padding-block:0 10px;border-bottom:2px solid #000}
+    .kicker,.sub{color:#000}
+    h1{font-size:18pt;margin:4px 0}
+
+    .phase,.ident,.task,.goals,.note,.book,.defbox{
+      background:#fff !important;border:1px solid #999;border-radius:0;
+      break-inside:avoid;page-break-inside:avoid;margin:10px 0;padding:10px 12px}
+    .goals,.note,.book{border-left:3px solid #000}
+    .book > .src{color:#000}
+    .phase > h2{font-size:13pt;margin-bottom:8px}
+    .num{background:#000 !important;color:#fff !important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .tag{border:1px solid #000 !important;background:none !important;color:#000 !important}
+    h3{font-size:12pt;margin:10px 0 4px}
+
+    pre.algo{background:#fff !important;color:#000 !important;border:1px solid #666;
+      border-radius:0;font-size:10.5pt;padding:8px 10px}
+    pre.algo b{color:#000 !important;font-weight:700}
+    pre.algo i{color:#444 !important}
+    code{background:none;border:1px solid #bbb;padding:0 3px}
+
+    ::placeholder{color:transparent !important;opacity:0 !important}
+    ::-webkit-input-placeholder{color:transparent !important;opacity:0 !important}
+    ::-moz-placeholder{color:transparent !important;opacity:0 !important}
+    :-ms-input-placeholder{color:transparent !important;opacity:0 !important}
+    label{color:#000}
+    input[type=text]{border:0;border-bottom:1px solid #000;border-radius:0;
+      padding:0 0 5mm 0;line-height:1}
+    td input[type=text]{border-bottom:0;padding:0}
+    textarea{border:1px solid #888;border-radius:0;background:#fff;min-height:38mm}
+    textarea.code{min-height:80mm}
+    table{font-size:10.5pt}
+    th{background:#eee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    td{height:16mm;vertical-align:top}
+
+    /* drag & drop στο χαρτί: λίστα όρων + κενά κουτάκια */
+    .dnd-pool{border:1px solid #666;background:#fff !important;min-height:0;padding:8px}
+    .chip{border:1px solid #000;color:#000;background:#fff !important;border-radius:0}
+    .dnd-row{border:1px solid #999;border-radius:0;page-break-inside:avoid}
+    .dnd-slot{border:1px solid #000;border-radius:0;min-height:12mm;background:#fff !important}
+    .dnd-slot::before{content:none !important}
+    .dnd-slot .chip{display:none}
+
+    /* λίστες επιλογής στο χαρτί: επιλογές για τσεκάρισμα */
+    select.qsel{display:none !important}
+    .popt{display:flex !important;flex-wrap:wrap;gap:4px 18px;font-size:11pt;padding:2px 0}
+    .popt.tight{gap:4px 14px;justify-content:center}
+    .popt span{white-space:nowrap}
+    .quiz td{height:auto;vertical-align:middle}
+    textarea:not(.code){min-height:30mm !important}
+    h2,h3,label,.field > p{break-after:avoid;page-break-after:avoid}
+    .field{break-inside:avoid;page-break-inside:avoid}
+
+    /* στο χαρτί η θεωρία των προχωρημένων τυπώνεται ανοιχτή */
+    details.theoryfold{border:1px solid #999;border-radius:0;page-break-inside:auto}
+    details.theoryfold > summary{font-size:12pt}
+    details.theoryfold > div,details.theoryfold > section{display:block !important}
+    .lvl{border:1px solid #000 !important;background:none !important;color:#000 !important}
+    footer{border-top:1px solid #999;font-size:9pt;color:#000}
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Διδακτική ώρα 2 · Κεφάλαια 2.1.1, 2.1.2</div>
+  <h1>Η έννοια του προβλήματος · Κατηγορίες προβλημάτων</h1>
+  <p class="sub">Εισαγωγή στις Αρχές της Επιστήμης των Η/Υ · Β΄ ΓΕΛ · σχ. έτος 2026-2027</p>
+</header>
+
+<section class="ident">
+  <h2>Η ομάδα μας</h2>
+  <div class="grid3">
+    <div><label for="m1">1ο μέλος</label><input type="text" id="m1" data-field="m1" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="m2">2ο μέλος <span style="font-weight:400">(προαιρετικό)</span></label><input type="text" id="m2" data-field="m2" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="m3">3ο μέλος <span style="font-weight:400">(προαιρετικό)</span></label><input type="text" id="m3" data-field="m3" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="tmima">Τμήμα</label><input type="text" id="tmima" data-field="tmima" placeholder="π.χ. Β3"></div>
+  </div>
+</section>
+
+<div class="goals">
+  <h2>Στόχοι της ώρας</h2>
+  <ul>
+    <li>Να διατυπώνετε τι εννοεί το βιβλίο με τον όρο «πρόβλημα».</li>
+    <li>Να αναγνωρίζετε ότι ένα πρόβλημα μπορεί να αντιμετωπίζεται με ποικίλους τρόπους και να έχει πολλές λύσεις.</li>
+    <li>Να κατατάσσετε προβλήματα, ως προς τη δυνατότητα επίλυσης, σε επιλύσιμα, μη επιλύσιμα και ανοικτά.</li>
+    <li>Να εξηγείτε τη διαφορά ανάμεσα σε ένα μη επιλύσιμο και σε ένα ανοικτό πρόβλημα.</li>
+  </ul>
+</div>
+
+<section class="phase">
+  <h2><span class="num">1</span> Αφόρμηση</h2>
+  <p>Την προηγούμενη ώρα είδατε ότι η Εφαρμοσμένη Επιστήμη των Υπολογιστών υπάρχει για να λύνει
+  προβλήματα του πραγματικού κόσμου. Πριν όμως μιλήσουμε για λύσεις, χρειάζεται να συμφωνήσουμε
+  τι ακριβώς είναι «πρόβλημα».</p>
+
+  <div class="field">
+    <label for="q1">Συζητήστε στην ομάδα σας και καταγράψτε <strong>δύο προβλήματα</strong>: ένα που
+    σας αφορά προσωπικά και ένα που αφορά όλη την ανθρωπότητα.</label>
+    <textarea id="q1" data-field="q1"></textarea>
+  </div>
+
+  <div class="field">
+    <label for="q2">Είναι το «πόσο κάνει 12 × 7;» πρόβλημα για εσάς; Και για έναν μαθητή της Α΄
+    Δημοτικού; Τι σας δείχνει αυτή η σύγκριση;</label>
+    <textarea id="q2" data-field="q2"></textarea>
+  </div>
+</section>
+
+<section class="phase">
+  <h2><span class="num">2</span> Οικοδόμηση της γνώσης</h2>
+  <h3>Το πρόβλημα ως διαχρονικό φαινόμενο</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.1.1 Η έννοια του προβλήματος (σελ. 14)</span>
+    <p>Οι άνθρωποι, από την πρώτη στιγμή της ύπαρξής τους, ήρθαν αντιμέτωποι με ποικίλα προβλήματα,
+    τόσο στις καθημερινές τους δραστηριότητες όσο και σε διάφορους επιστημονικούς τομείς. Κάνοντας
+    μια αναδρομή στην ιστορία είναι δυνατό να εντοπιστούν πληθώρα προβλημάτων.</p>
+    <ul>
+      <li>Ο Όμηρος στην Οδύσσεια περιγράφει τα προβλήματα που αντιμετώπιζε ο Οδυσσέας για να φτάσει
+      στην Ιθάκη.</li>
+      <li>Το πρόβλημα που κλήθηκε να επιλύσει ο Αρχιμήδης με τη βασιλική κορώνα που οδήγησε στη
+      γνωστή φράση του «Εύρηκα-Εύρηκα».</li>
+      <li>Το πρόβλημα μέτρησης του χρόνου, το οποίο αντιμετωπίστηκε με τη χρήση της κλεψύδρας και
+      του εκκρεμούς.</li>
+      <li>Τα προβλήματα επιδημιών στην ανθρωπότητα και η αντιμετώπισή τους με εμβόλια.</li>
+      <li>Το πρόβλημα του «ιού του 2000» και η αντιμετώπισή του, ώστε τα υπολογιστικά συστήματα να
+      λειτουργήσουν σωστά την 1/1/2000.</li>
+    </ul>
+    <p>Όπως φαίνεται, η ύπαρξη προβλημάτων είναι ένα διαχρονικό φαινόμενο. Στην εποχή μας, οι
+    άνθρωποι έρχονται αντιμέτωποι με προβλήματα στον προσωπικό, στον επαγγελματικό και στον
+    κοινωνικό χώρο γενικότερα. Όλοι οι άνθρωποι δεν αντιμετωπίζουν τα ίδια προβλήματα και επιπλέον
+    δίνουν διαφορετική σημασία και βαρύτητα σε αυτά. Ωστόσο υπάρχουν προβλήματα που αναγνωρίζονται
+    από τους περισσότερους ως πολύ σημαντικά.</p>
+    <p>Τα προβλήματα εκτός από δυσάρεστες ή πιεστικές καταστάσεις που απαιτούν λύση (περιβαλλοντικά
+    προβλήματα, κοινωνικά προβλήματα, προσωπικά προβλήματα κ.ά.) μπορούν να είναι είτε ενδιαφέρουσες
+    προκλήσεις (π.χ. η επίλυση ενός γρίφου ή η νίκη σε ένα παιχνίδι σκάκι), είτε ευκαιρίες για να
+    προκύψει κάτι ωφέλιμο για την κοινωνία μέσω της επίλυσής τους (π.χ. νέα ασφαλέστερα υλικά για
+    την κατασκευή αυτοκινήτων, τρισδιάστατες εκτυπώσεις κ.ά.).</p>
+    <p><em>Τα προβλήματα δεν είναι απαραίτητα μαθηματικές καταστάσεις που απαιτούν
+    αντιμετώπιση.</em></p>
+  </div>
+
+  <h3>Ο ορισμός</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.1.1 (σελ. 14)</span>
+    <p>Όλα τα προβλήματα δεν μπορούν να αντιμετωπιστούν με έναν ενιαίο και μοναδικό τρόπο. Επιπλέον,
+    κάθε ξεχωριστό πρόβλημα μπορεί να αντιμετωπίζεται και να επιλύεται με ποικίλους τρόπους, ενώ
+    συγχρόνως μπορεί να έχει πολλές λύσεις (το πρόβλημα οργάνωσης μιας εκπαιδευτικής επίσκεψης).</p>
+    <div class="defbox">
+      <p>Με τον όρο <strong>Πρόβλημα</strong> προσδιορίζεται μια κατάσταση η οποία χρήζει
+      αντιμετώπισης, απαιτεί λύση, η δε λύση της δεν είναι γνωστή, ούτε προφανής.</p>
+    </div>
+    <p>Η διατύπωση ενός προβλήματος και η αντιμετώπισή του, αποτελούν ζητήματα που απαιτούν
+    ικανότητες ορθολογικής, αναλυτικής και συνθετικής σκέψης, αλλά και σωστό χειρισμό της φυσικής
+    γλώσσας. Επιπλέον, οι δεξιότητες που αποκτούνται από την ενασχόληση με τα προβλήματα (διατύπωση
+    και αντιμετώπισή τους), αποτελούν χρήσιμα εφόδια για κάθε ανθρώπινη δραστηριότητα.</p>
+  </div>
+
+  <div class="note">Ο ορισμός έχει <strong>τρία</strong> σκέλη και πρέπει να ισχύουν
+  <em>όλα</em>: (α) κατάσταση που χρήζει αντιμετώπισης, (β) απαιτεί λύση, (γ) η λύση δεν είναι ούτε
+  γνωστή ούτε προφανής. Αν λείπει έστω και ένα, δεν μιλάμε για πρόβλημα με τη σημασία του βιβλίου.</div>
+
+  <div class="field">
+    <label for="q3">Με βάση το τρίτο σκέλος: γιατί το «πόσο κάνει 12 × 7;» δεν είναι πρόβλημα για
+    εσάς σήμερα, ενώ ήταν πριν από μερικά χρόνια;</label>
+    <textarea id="q3" data-field="q3" style="min-height:56px"></textarea>
+  </div>
+
+  <h3>Κατηγορίες προβλημάτων ως προς τη δυνατότητα επίλυσης</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.1.2 Κατηγορίες Προβλημάτων (σελ. 15)</span>
+    <p>Τα προβλήματα ανάλογα με τη δυνατότητα επίλυσης διακρίνονται σε τρεις κατηγορίες.</p>
+    <div class="defbox">
+      <p><strong>Επιλύσιμα</strong> είναι εκείνα τα προβλήματα για τα οποία η λύση έχει βρεθεί και
+      έχει διατυπωθεί.</p>
+      <p><strong>Μη επιλύσιμα</strong> χαρακτηρίζονται εκείνα τα προβλήματα για τα οποία έχει
+      αποδειχτεί, ότι δεν επιδέχονται λύση.</p>
+      <p><strong>Ανοικτά</strong> ονομάζονται τα προβλήματα για τα οποία η λύση τους δεν έχει ακόμα
+      βρεθεί, ενώ ταυτόχρονα δεν έχει αποδειχτεί, ότι δεν επιδέχονται λύση.</p>
+    </div>
+    <p>Παραδείγματα επιλύσιμων προβλημάτων είναι η αποψίλωση μιας έκτασης γης (ο καθαρισμός δηλαδή
+    ενός χωραφιού από κάθε είδους βλάστηση), η επίλυση της δευτεροβάθμιας εξίσωσης κ.ά.</p>
+    <p>Το πρόβλημα του τετραγωνισμού του κύκλου με κανόνα και διαβήτη που είχε διατυπωθεί από τους
+    αρχαίους ελληνιστικούς χρόνους είναι ένα μη επιλύσιμο πρόβλημα. Παρότι το πρόβλημα επιδέχεται
+    προσεγγιστική λύση, δεν μπορεί να λυθεί με τη χρήση κανόνα και διαβήτη.</p>
+    <p>Ένα άλλο μη επιλύσιμο πρόβλημα είναι η εύρεση ακέραιων λύσεων οποιασδήποτε διοφαντικής
+    εξίσωσης (ακέραια πολυωνυμική εξίσωση) όπως της 6x + 15y = 4. Το 1970 αποδείχτηκε ότι το
+    πρόβλημα είναι μη επιλύσιμο.</p>
+    <p>Παράδειγμα ανοικτού προβλήματος είναι το πρόβλημα της ενοποίησης των τεσσάρων πεδίων δυνάμεων
+    (βαρυτικού, ηλεκτρομαγνητικού, ασθενούς πυρηνικού και ισχυρού πυρηνικού), το οποίο προς το παρόν
+    δεν έχει επιλυθεί. Επίσης, η εικασία του Γκόλντμπαχ (Goldbach, κάθε άρτιος μπορεί να γραφτεί ως
+    άθροισμα δύο πρώτων αριθμών) αποτελεί ένα ανοικτό πρόβλημα αφού δεν έχει ακόμα αποδειχθεί.</p>
+    <p><em>Εικόνα 2.2. Κατηγορίες προβλημάτων</em></p>
+    <svg viewBox="0 0 520 210" role="img" aria-label="Κατηγορίες προβλημάτων ως προς τη δυνατότητα επίλυσης" style="max-width:100%;height:auto;display:block;margin:10px auto">
+  <defs><marker id="ar02" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#1b1b1a"/></marker></defs>
+  <rect x="130" y="10" width="260" height="44" rx="6" fill="#e6f2f0" stroke="#0b6b5e" stroke-width="1.6"/>
+  <text x="260" y="30" text-anchor="middle" font-size="13.5" fill="#0b6b5e" font-weight="700">Προβλήματα</text>
+  <text x="260" y="47" text-anchor="middle" font-size="13" fill="#0b6b5e">ως προς τη δυνατότητα επίλυσης</text>
+  <g fill="none" stroke="#1b1b1a" stroke-width="1.6" marker-end="url(#ar02)">
+    <path d="M260,54 L260,78 L90,78 L90,100"/>
+    <path d="M260,54 L260,100"/>
+    <path d="M260,54 L260,78 L430,78 L430,100"/>
+  </g>
+  <rect x="15" y="102" width="150" height="42" rx="6" fill="#fff" stroke="#0b6b5e" stroke-width="1.6"/>
+  <text x="90" y="128" text-anchor="middle" font-size="13.5" fill="#1b1b1a">Επιλύσιμα</text>
+  <rect x="185" y="102" width="150" height="42" rx="6" fill="#fff" stroke="#0b6b5e" stroke-width="1.6"/>
+  <text x="260" y="128" text-anchor="middle" font-size="13.5" fill="#1b1b1a">Μη επιλύσιμα</text>
+  <rect x="355" y="102" width="150" height="42" rx="6" fill="#fff" stroke="#0b6b5e" stroke-width="1.6"/>
+  <text x="430" y="128" text-anchor="middle" font-size="13.5" fill="#1b1b1a">Ανοικτά</text>
+  <text x="90" y="166" text-anchor="middle" font-size="12" fill="#5f5f5a">η λύση βρέθηκε</text>
+  <text x="90" y="183" text-anchor="middle" font-size="12" fill="#5f5f5a">και διατυπώθηκε</text>
+  <text x="260" y="166" text-anchor="middle" font-size="12" fill="#5f5f5a">αποδείχθηκε ότι</text>
+  <text x="260" y="183" text-anchor="middle" font-size="12" fill="#5f5f5a">δεν επιδέχονται λύση</text>
+  <text x="430" y="166" text-anchor="middle" font-size="12" fill="#5f5f5a">ούτε λύση βρέθηκε</text>
+  <text x="430" y="183" text-anchor="middle" font-size="12" fill="#5f5f5a">ούτε αποδείχθηκε το αντίθετο</text>
+</svg>
+    <p><em>«Η ζωή είναι επίλυση προβλημάτων», (Καρλ Πόππερ, Karl Popper, 1994)</em></p>
+  </div>
+
+  <div class="note">Η κρίσιμη διαφορά: στα <strong>μη επιλύσιμα</strong> υπάρχει <em>απόδειξη</em>
+  ότι λύση δεν υπάρχει. Στα <strong>ανοικτά</strong> δεν υπάρχει ούτε λύση ούτε τέτοια απόδειξη —
+  απλώς δεν ξέρουμε ακόμη. Γι' αυτό ένα ανοικτό πρόβλημα μπορεί αύριο να γίνει επιλύσιμο, ενώ ένα
+  μη επιλύσιμο δεν γίνεται.</div>
+</section>
+
+<section class="phase">
+  <h2><span class="num">3</span> Εφαρμογή σε ζεύγη</h2>
+  <p>Ο <strong>οδηγός</strong> γράφει, ο <strong>παρατηρητής</strong> ελέγχει φωναχτά κάθε γραμμή.
+  Αλλάζετε ρόλους σε κάθε δραστηριότητα.</p>
+  <div class="task">
+    <h3>Δραστηριότητα 1 — Αντιστοιχίστε: πρόβλημα → κατηγορία<span class="tag core">Βασική</span></h3>
+    <p>Σύρετε δίπλα σε κάθε πρόβλημα την κατηγορία στην οποία ανήκει <strong>ως προς τη δυνατότητα
+    επίλυσης</strong>. (Σε οθόνη αφής: πατήστε πρώτα την κατηγορία και μετά το κενό κουτί.) Κάθε
+    κατηγορία χρησιμοποιείται περισσότερες από μία φορές — γι' αυτό υπάρχουν πολλά όμοια κουτάκια.</p>
+
+    <div class="dnd" data-field="d1">
+      <div class="dnd-pool">
+        <span class="chip" data-v="Ανοικτό">Ανοικτό</span>
+        <span class="chip" data-v="Ανοικτό">Ανοικτό</span>
+        <span class="chip" data-v="Μη επιλύσιμο">Μη επιλύσιμο</span>
+        <span class="chip" data-v="Μη επιλύσιμο">Μη επιλύσιμο</span>
+        <span class="chip" data-v="Επιλύσιμο">Επιλύσιμο</span>
+        <span class="chip" data-v="Επιλύσιμο">Επιλύσιμο</span>
+      </div>
+      <div class="dnd-rows">
+        <div class="dnd-row" data-key="r1" data-answer="Επιλύσιμο">
+          <div>Η επίλυση της δευτεροβάθμιας εξίσωσης.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r2" data-answer="Μη επιλύσιμο">
+          <div>Ο τετραγωνισμός του κύκλου με κανόνα και διαβήτη.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r3" data-answer="Ανοικτό">
+          <div>Η ενοποίηση των τεσσάρων πεδίων δυνάμεων.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r4" data-answer="Επιλύσιμο">
+          <div>Η αποψίλωση μιας έκτασης γης.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r5" data-answer="Ανοικτό">
+          <div>Η εικασία του Γκόλντμπαχ: κάθε άρτιος γράφεται ως άθροισμα δύο πρώτων αριθμών.</div><div class="dnd-slot"></div></div>
+        <div class="dnd-row" data-key="r6" data-answer="Μη επιλύσιμο">
+          <div>Η εύρεση ακέραιων λύσεων οποιασδήποτε διοφαντικής εξίσωσης.</div><div class="dnd-slot"></div></div>
+      </div>
+      <div class="dnd-tools">
+        <button type="button" data-act="check">Έλεγχος</button>
+        <button type="button" data-act="clear">Καθάρισμα</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="a1">Δύο από τις έξι γραμμές θα μπορούσαν να μπερδευτούν μεταξύ τους. Ποιες, και
+      ποια <em>ακριβώς</em> λέξη του ορισμού τις ξεχωρίζει;</label>
+      <textarea id="a1" data-field="a1" style="min-height:56px"></textarea>
+    </div>
+  </div>
+  <div class="task">
+    <h3>Δραστηριότητα 2 — Είναι πρόβλημα; Ελέγξτε τα τρία σκέλη<span class="tag core">Βασική</span></h3>
+    <p>Ο ορισμός απαιτεί να ισχύουν <strong>και τα τρία</strong> σκέλη. Επιλέξτε <strong>ΝΑΙ</strong>
+    ή <strong>ΟΧΙ</strong> σε κάθε στήλη και βγάλτε συμπέρασμα στην τελευταία.</p>
+
+    <div class="quiz">
+    <div class="scroll">
+    <table>
+      <thead><tr>
+        <th style="width:40%">Κατάσταση</th>
+        <th style="width:16%">Χρήζει αντιμετώπισης;</th>
+        <th style="width:14%">Απαιτεί λύση;</th>
+        <th style="width:16%">Η λύση είναι άγνωστη / μη προφανής;</th>
+        <th style="width:14%">Πρόβλημα;</th></tr></thead>
+      <tbody>
+        <tr><td>Ένας μαθητής της Β΄ ΓΕΛ καλείται να βρει το 3 + 4.</td>
+            <td><select data-field="s1a" class="qsel" data-answer="ΟΧΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s1b" class="qsel" data-answer="ΟΧΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td>
+            <td><select data-field="s1c" class="qsel" data-answer="ΟΧΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s1d" class="qsel" data-answer="ΟΧΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td></tr>
+        <tr><td>Το σχολείο θέλει να οργανώσει εκπαιδευτική επίσκεψη με 120 μαθητές και 3 λεωφορεία.</td>
+            <td><select data-field="s2a" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s2b" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td>
+            <td><select data-field="s2c" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s2d" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td></tr>
+        <tr><td>Λύνετε έναν γρίφο για διασκέδαση, σε ένα περιοδικό.</td>
+            <td><select data-field="s3a" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s3b" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td>
+            <td><select data-field="s3c" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s3d" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td></tr>
+        <tr><td>Πέφτει βροχή και βγαίνετε από το σπίτι με ομπρέλα.</td>
+            <td><select data-field="s4a" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s4b" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td>
+            <td><select data-field="s4c" class="qsel" data-answer="ΟΧΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s4d" class="qsel" data-answer="ΟΧΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td></tr>
+        <tr><td>Η μείωση της ατμοσφαιρικής ρύπανσης στην πόλη σας.</td>
+            <td><select data-field="s5a" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s5b" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td>
+            <td><select data-field="s5c" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td><td><select data-field="s5d" class="qsel" data-answer="ΝΑΙ" aria-label="ΝΑΙ ή ΟΧΙ"><option value="">–</option><option value="ΝΑΙ">ΝΑΙ</option><option value="ΟΧΙ">ΟΧΙ</option></select></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="dnd-tools">
+      <button type="button" data-qact="check">Έλεγχος</button>
+      <button type="button" data-qact="clear">Καθάρισμα</button>
+    </div>
+    <div class="dnd-msg"></div>
+    </div>
+
+    <div class="field">
+      <label for="a2">Ο γρίφος δεν είναι «δυσάρεστη κατάσταση». Το βιβλίο τον θεωρεί όμως πρόβλημα.
+      Με ποια λέξη του βιβλίου δικαιολογείται αυτό;</label>
+      <textarea id="a2" data-field="a2" style="min-height:52px"></textarea>
+    </div>
+    <p class="hint">Δείτε ξανά την παράγραφο με τις «ενδιαφέρουσες προκλήσεις» και τις «ευκαιρίες».</p>
+  </div>
+
+</section>
+
+<section class="phase">
+  <h2><span class="num">4</span> Κλείσιμο — τι κρατάμε</h2>
+  <div class="field">
+    <label for="qc">Με δικά σας λόγια: σε τι διαφέρει ένα μη επιλύσιμο από ένα ανοικτό πρόβλημα;</label>
+    <textarea id="qc" data-field="qc" style="min-height:60px"></textarea>
+  </div>
+  <div class="note">
+    <strong>Επόμενη ώρα:</strong> ποια προβλήματα μπορεί να λύσει ένας υπολογιστής και ποια όχι, και ποια στάδια ακολουθούμε για να επιλύσουμε ένα πρόβλημα.
+  </div>
+</section>
+
+<div class="bar">
+  <div class="barcard">
+    <div class="btns">
+      <button type="button" id="saveBtn">💾 Αποθήκευση</button>
+      <button type="button" id="loadBtn">📂 Συνέχεια από αποθηκευμένο</button>
+      <button type="button" id="printBtn">🖨️ Εκτύπωση</button>
+      <input type="file" id="fileIn" accept=".html,text/html" hidden>
+    </div>
+    <div id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<footer>
+  Ω02 · Εισαγωγή στις Αρχές της Επιστήμης των Η/Υ · Β΄ ΓΕΛ · σχ. έτος 2026-2027
+</footer>
+
+</div>
+
+<script>
+/* ============ αντιστοίχιση με σύρσιμο (drag & drop) ============ */
+(function () {
+'use strict';
+
+function chipsOf(root) { return Array.prototype.slice.call(root.querySelectorAll('.chip')); }
+
+function build(dnd) {
+  var pool = dnd.querySelector('.dnd-pool');
+  var rows = Array.prototype.slice.call(dnd.querySelectorAll('.dnd-row'));
+  var store = dnd.querySelector('input.dnd-store');
+  if (!store) {
+    store = document.createElement('input');
+    store.type = 'hidden';
+    store.className = 'dnd-store';
+    store.setAttribute('data-field', dnd.getAttribute('data-field') || ('dnd' + Math.random().toString(36).slice(2, 7)));
+    dnd.appendChild(store);
+  }
+  var msg = dnd.querySelector('.dnd-msg');
+  if (!msg) { msg = document.createElement('div'); msg.className = 'dnd-msg'; dnd.appendChild(msg); }
+
+  var sel = null;
+  function select(ch) {
+    chipsOf(dnd).forEach(function (c) { c.classList.remove('sel'); });
+    sel = ch; if (ch) ch.classList.add('sel');
+  }
+  function place(ch, target) {
+    if (!ch) return;
+    if (target.classList.contains('dnd-slot')) {
+      var cur = target.querySelector('.chip');
+      if (cur && cur !== ch) pool.appendChild(cur);
+      target.appendChild(ch);
+    } else {
+      pool.appendChild(ch);
+    }
+    select(null); save(); msg.textContent = ''; msg.className = 'dnd-msg';
+  }
+  function save() {
+    var d = {};
+    rows.forEach(function (r) {
+      var slot = r.querySelector('.dnd-slot');
+      var c = slot.querySelector('.chip');
+      slot.classList.toggle('filled', !!c);
+      d[r.getAttribute('data-key')] = c ? c.getAttribute('data-v') : '';
+    });
+    store.value = JSON.stringify(d);
+  }
+
+  chipsOf(dnd).forEach(function (ch) {
+    ch.setAttribute('draggable', 'true');
+    ch.addEventListener('dragstart', function (e) {
+      sel = ch; e.dataTransfer.setData('text/plain', ch.getAttribute('data-v'));
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    ch.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (sel && sel !== ch && ch.parentNode.classList.contains('dnd-slot')) { place(sel, ch.parentNode); return; }
+      select(sel === ch ? null : ch);
+    });
+  });
+
+  var targets = rows.map(function (r) { return r.querySelector('.dnd-slot'); }).concat([pool]);
+  targets.forEach(function (t) {
+    t.addEventListener('dragover', function (e) { e.preventDefault(); t.classList.add('over'); });
+    t.addEventListener('dragleave', function () { t.classList.remove('over'); });
+    t.addEventListener('drop', function (e) { e.preventDefault(); t.classList.remove('over'); place(sel, t); });
+    t.addEventListener('click', function () { if (sel) place(sel, t); });
+  });
+
+  var tools = dnd.querySelector('.dnd-tools');
+  if (tools) {
+    var bChk = tools.querySelector('[data-act="check"]');
+    var bClr = tools.querySelector('[data-act="clear"]');
+    if (bChk) bChk.addEventListener('click', function () {
+      var ok = 0, filled = 0;
+      rows.forEach(function (r) {
+        var c = r.querySelector('.dnd-slot .chip');
+        if (c) { filled++; if (c.getAttribute('data-v') === r.getAttribute('data-answer')) ok++; }
+      });
+      if (filled < rows.length) {
+        msg.className = 'dnd-msg'; msg.textContent = 'Συμπλήρωσε πρώτα όλες τις γραμμές (' + filled + '/' + rows.length + ').';
+      } else if (ok === rows.length) {
+        msg.className = 'dnd-msg ok'; msg.textContent = '✓ Όλα σωστά (' + ok + '/' + rows.length + ').';
+      } else {
+        msg.className = 'dnd-msg bad'; msg.textContent = 'Σωστά ' + ok + ' από ' + rows.length + '. Ξαναδές τα υπόλοιπα.';
+      }
+    });
+    if (bClr) bClr.addEventListener('click', function () {
+      chipsOf(dnd).forEach(function (c) { pool.appendChild(c); });
+      select(null); save(); msg.textContent = ''; msg.className = 'dnd-msg';
+    });
+  }
+  save();
+  dnd._restore = function () {
+    var d;
+    try { d = JSON.parse(store.value || '{}'); } catch (e) { return; }
+    rows.forEach(function (r) {
+      var want = d[r.getAttribute('data-key')];
+      var slot = r.querySelector('.dnd-slot');
+      var cur = slot.querySelector('.chip');
+      if (cur) pool.appendChild(cur);
+      if (!want) return;
+      var ch = chipsOf(dnd).filter(function (c) { return c.getAttribute('data-v') === want; })[0];
+      if (ch) slot.appendChild(ch);
+    });
+    save();
+  };
+}
+
+window.DND_INIT = function () {
+  var ds = document.querySelectorAll('.dnd');
+  for (var i = 0; i < ds.length; i++) build(ds[i]);
+};
+window.DND_SYNC = function () {
+  var ds = document.querySelectorAll('.dnd');
+  for (var i = 0; i < ds.length; i++) if (ds[i]._restore) ds[i]._restore();
+};
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.DND_INIT);
+else window.DND_INIT();
+})();
+
+
+/* ============ αποθήκευση · συνέχεια · εκτύπωση ============ */
+(function () {
+  var FILE_CODE = "O02";
+  var st = document.getElementById("status");
+
+  function fields() { return Array.prototype.slice.call(document.querySelectorAll("[data-field]")); }
+  function say(m) { st.textContent = m; }
+
+  function apply(data) {
+    var n = 0;
+    fields().forEach(function (el) {
+      if (Object.prototype.hasOwnProperty.call(data, el.dataset.field)) { el.value = data[el.dataset.field]; n++; }
+    });
+    if (window.DND_SYNC) window.DND_SYNC();
+    return n;
+  }
+
+  function loadEmbedded() {
+    var embedded = document.getElementById("saved-state");
+    if (embedded) { try { apply(JSON.parse(embedded.textContent)); } catch (e) { } }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadEmbedded);
+  else loadEmbedded();
+
+  var GR2LAT = {"α":"a","ά":"a","β":"v","γ":"g","δ":"d","ε":"e","έ":"e","ζ":"z",
+    "η":"i","ή":"i","θ":"th","ι":"i","ί":"i","ϊ":"i","ΐ":"i","κ":"k","λ":"l","μ":"m",
+    "ν":"n","ξ":"x","ο":"o","ό":"o","π":"p","ρ":"r","σ":"s","ς":"s","τ":"t","υ":"y",
+    "ύ":"y","ϋ":"y","ΰ":"y","φ":"f","χ":"ch","ψ":"ps","ω":"o","ώ":"o"};
+
+  function slug(s) {
+    s = (s || "").trim().toLowerCase();
+    var out = "";
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (GR2LAT[ch]) out += GR2LAT[ch];
+      else if (/[a-z0-9]/.test(ch)) out += ch;
+      else if (/[\s_-]/.test(ch)) out += "_";
+    }
+    return out.replace(/_+/g, "_").replace(/^_|_$/g, "").slice(0, 24);
+  }
+  function buildName(d) {
+    var parts = [d.m1, d.m2, d.m3].map(slug).filter(Boolean);
+    var tm = slug(d.tmima);
+    return FILE_CODE + "_" + (tm ? tm + "_" : "") + (parts.length ? parts.join("-") : "omada") + ".html";
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", function () {
+    var data = {};
+    fields().forEach(function (el) { data[el.dataset.field] = el.value; });
+    data._ora = FILE_CODE;
+    data._titlos = document.title;
+    data._saved = new Date().toISOString();
+
+    if (!(data.m1 || "").trim()) {
+      say("Συμπληρώστε πρώτα τουλάχιστον το 1ο μέλος της ομάδας.");
+      document.getElementById("m1").focus();
+      return;
+    }
+
+    var clone = document.documentElement.cloneNode(true);
+    var old = clone.querySelector("#saved-state");
+    if (old) old.parentNode.removeChild(old);
+    var s = document.createElement("script");
+    s.id = "saved-state"; s.type = "application/json";
+    s.textContent = JSON.stringify(data);
+    clone.querySelector("head").appendChild(s);
+
+    var blob = new Blob(["<!DOCTYPE html>\n" + clone.outerHTML], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = buildName(data);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+
+    say("Αποθηκεύτηκε στις " + new Date().toLocaleTimeString("el-GR") + ".");
+  });
+
+  function openDetails() {
+    var ds = document.querySelectorAll("details");
+    for (var i = 0; i < ds.length; i++) ds[i].open = true;
+  }
+  window.addEventListener("beforeprint", openDetails);
+  document.getElementById("printBtn").addEventListener("click", function () { openDetails(); window.print(); });
+
+  var fileIn = document.getElementById("fileIn");
+  document.getElementById("loadBtn").addEventListener("click", function () { fileIn.click(); });
+
+  fileIn.addEventListener("change", function () {
+    var f = fileIn.files && fileIn.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var doc = new DOMParser().parseFromString(String(r.result), "text/html");
+        var tag = doc.getElementById("saved-state");
+        if (!tag) { say("Το αρχείο δεν περιέχει αποθηκευμένες απαντήσεις."); return; }
+        say("Φορτώθηκαν οι απαντήσεις σας (" + apply(JSON.parse(tag.textContent)) + " πεδία).");
+      } catch (e) {
+        say("Δεν μπόρεσα να διαβάσω το αρχείο. Βεβαιωθείτε ότι είναι το αποθηκευμένο φύλλο του μαθήματος.");
+      }
+      fileIn.value = "";
+    };
+    r.readAsText(f, "utf-8");
+  });
+})();
+
+</script>
+<script>
+/* Αυτοέλεγχος για λίστες επιλογής (.quiz) + εκτυπώσιμες επιλογές */
+(function () {
+  function buildPrint() {
+    document.querySelectorAll('select.qsel').forEach(function (s) {
+      var box = s.nextElementSibling;
+      if (!box || !box.classList.contains('popt')) {
+        box = document.createElement('div'); box.className = 'popt' + (s.options.length <= 3 ? ' tight' : '');
+        s.parentNode.insertBefore(box, s.nextSibling);
+      }
+      box.innerHTML = '';
+      Array.prototype.forEach.call(s.options, function (o) {
+        if (!o.value) return;
+        var sp = document.createElement('span');
+        sp.textContent = (s.value === o.value ? '\u2612 ' : '\u2610 ') + o.textContent;
+        box.appendChild(sp);
+      });
+    });
+  }
+  buildPrint();
+  window.addEventListener('beforeprint', buildPrint);
+  function msgOf(q) { var m = q.querySelector(':scope > .dnd-msg') || q.querySelector('.dnd-msg');
+    if (!m) { m = document.createElement('div'); m.className = 'dnd-msg'; q.appendChild(m); } return m; }
+  function norm(v) { return String(v).trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.').replace(/["\u00ab\u00bb']/g, ''); }
+  function reset(q) { q.querySelectorAll('select.qsel, input.qin').forEach(function (s) { s.classList.remove('right', 'wrong'); });
+    var m = msgOf(q); m.textContent = ''; m.className = 'dnd-msg'; }
+  document.querySelectorAll('.quiz').forEach(function (q) {
+    var all = Array.prototype.slice.call(q.querySelectorAll('select.qsel, input.qin, input[type="text"][data-field], textarea[data-field]'));
+    if (!all.length) return;
+    var graded = all.filter(function (s) { return s.hasAttribute('data-answer'); });
+    all.forEach(function (s) { s.addEventListener(s.tagName === 'SELECT' ? 'change' : 'input', function () { reset(q); }); });
+    var bc = q.querySelector('[data-qact="check"]'), bx = q.querySelector('[data-qact="clear"]');
+    if (bc) bc.addEventListener('click', function () {
+      var m = msgOf(q), filled = 0;
+      graded.forEach(function (s) { s.classList.remove('right', 'wrong'); });
+      all.forEach(function (s) { if (s.value.trim() !== '') filled++; });
+      if (filled < all.length) { m.className = 'dnd-msg'; m.textContent = 'Συμπλήρωσε πρώτα όλα τα πεδία (' + filled + '/' + all.length + ').'; return; }
+      var ok = 0;
+      graded.forEach(function (s) { var ans = s.getAttribute('data-answer').split('|').map(norm); var r = ans.indexOf(norm(s.value)) >= 0; if (r) ok++; s.classList.add(r ? 'right' : 'wrong'); });
+      if (!graded.length) { m.className = 'dnd-msg ok'; m.textContent = '\u2713 Συμπληρώθηκαν όλα τα πεδία.'; }
+      else if (ok === graded.length) { m.className = 'dnd-msg ok'; m.textContent = '\u2713 \u038c\u03bb\u03b1 \u03c3\u03c9\u03c3\u03c4\u03ac (' + ok + '/' + graded.length + ').'; }
+      else { m.className = 'dnd-msg bad'; m.textContent = '\u03a3\u03c9\u03c3\u03c4\u03ac ' + ok + ' \u03b1\u03c0\u03cc ' + graded.length + '. \u039e\u03b1\u03bd\u03b1\u03b4\u03ad\u03c2 \u03cc\u03c3\u03b1 \u03b5\u03af\u03bd\u03b1\u03b9 \u03bc\u03b5 \u03ba\u03cc\u03ba\u03ba\u03b9\u03bd\u03bf.'; }
+    });
+    if (bx) bx.addEventListener('click', function () { all.forEach(function (s) { s.value = ''; }); reset(q); });
+  });
+})();
+</script>
+</body>
+</html>

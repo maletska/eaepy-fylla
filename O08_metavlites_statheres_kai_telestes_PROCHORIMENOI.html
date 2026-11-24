@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ω08Π — Μεταβλητές, σταθερές και τελεστές</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --card:#fff; --ink:#1b1b1a; --muted:#5f5f5a;
+    --line:#e0e0da; --accent:#0b6b5e; --accent-soft:#e6f2f0;
+    --warn:#a8600a; --warn-soft:#fdf2e2;
+    --book:#2f4858; --book-soft:#eef3f6;
+    --opt:#6b4fa8; --opt-soft:#f1ecfa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 "Segoe UI",Roboto,-apple-system,sans-serif;padding:0 16px 64px}
+  .wrap{max-width:900px;margin:0 auto}
+
+  header.top{padding-block:28px 20px;border-bottom:3px solid var(--accent)}
+  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);font-weight:700}
+  h1{font-size:clamp(22px,4.2vw,31px);margin:6px 0 4px;line-height:1.25}
+  .sub{color:var(--muted);font-size:15px}
+
+  .ident{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin:20px 0}
+  .ident h2{font-size:14px;margin:0 0 12px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--muted)}
+  .grid3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(175px,1fr))}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px}
+  input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:#fff;
+    border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+  textarea{min-height:72px;resize:vertical;line-height:1.55}
+  textarea.code{font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14.5px;line-height:1.7;min-height:175px}
+  input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+
+  .phase{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:20px;margin:18px 0}
+  .phase > h2{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 12px;font-size:19px}
+  .num{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;
+    background:var(--accent);color:#fff;border-radius:50%;font-size:14px;font-weight:700}
+
+  h3{font-size:16px;margin:18px 0 6px}
+  h4{font-size:14.5px;margin:14px 0 4px;color:var(--muted)}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 12px;padding-left:22px}
+  li{margin-bottom:4px}
+
+  .goals{background:var(--accent-soft);border-radius:10px;padding:14px 18px;margin:16px 0}
+  .goals h2{margin:0 0 8px;font-size:14px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--accent)}
+  .goals ul{margin:0;padding-left:20px}
+
+  /* ---------- αυτούσιο κείμενο βιβλίου ---------- */
+  .book{background:var(--book-soft);border:1px solid #cfdbe3;border-left:5px solid var(--book);
+    border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+  .book > .src{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--book);font-weight:700;margin-bottom:8px}
+  .book p:last-child,.book ul:last-child{margin-bottom:0}
+  .defbox{background:#fff;border:1px dashed var(--book);border-radius:8px;
+    padding:10px 14px;margin:10px 0}
+  .defbox p:last-child{margin-bottom:0}
+
+  pre.algo{background:#1d2424;color:#e8f0ee;border-radius:10px;padding:15px 18px;
+    overflow-x:auto;font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14.5px;line-height:1.75;margin:12px 0;white-space:pre}
+  pre.algo b{color:#7fd6c2;font-weight:700}
+  pre.algo i{color:#9fb0ad;font-style:normal}
+  code{background:#ecebe6;padding:1px 6px;border-radius:5px;
+    font-family:"Cascadia Mono",Consolas,monospace;font-size:14.5px}
+
+  .note{background:var(--warn-soft);border-left:4px solid var(--warn);
+    padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;font-size:15px}
+  .task{border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:15px 18px;margin:16px 0;background:#fcfcfb}
+  .task h3{margin:0 0 8px;font-size:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+  .task.optional{border-left-color:var(--opt);background:#fdfcff}
+  .tag{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:2px 9px;border-radius:20px;white-space:nowrap}
+  .tag.opt{background:var(--opt-soft);color:var(--opt);border:1px solid #d6c9ef}
+  .tag.adv{background:#fdeee8;color:#a8400a;border:1px solid #f1cdbe}
+  .tag.core{background:var(--accent-soft);color:var(--accent);border:1px solid #bcdcd6}
+  .task.advanced{border-left-color:var(--opt)}
+  .advnote{background:var(--opt-soft);border-left-color:var(--opt)}
+  details.recap{border:1px solid var(--line);border-radius:12px;background:var(--card);
+    padding:0 18px;margin:18px 0}
+  details.recap > summary{cursor:pointer;font-weight:700;color:var(--accent);
+    padding:14px 0;list-style:revert}
+  details.recap[open] > summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+  details.recap > *:last-child{margin-bottom:14px}
+  .field{margin:12px 0}
+  .hint{font-size:13.5px;color:var(--muted);margin:4px 0 0}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f0f0ec;font-size:14px}
+  td input[type=text]{border:none;background:transparent;padding:2px}
+  .scroll{overflow-x:auto}
+
+  /* ---------- drag & drop αντιστοίχισης ---------- */
+  .dnd{margin:12px 0}
+  .dnd-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#f2f2ee;
+    border:1px dashed var(--line);border-radius:10px;min-height:54px;align-content:flex-start}
+  .dnd-pool.over,.dnd-slot.over{outline:2px dashed var(--accent);outline-offset:2px;background:var(--accent-soft)}
+  .chip{display:inline-block;background:#fff;border:1px solid var(--accent);color:var(--accent);
+    border-radius:20px;padding:6px 14px;font-size:14.5px;font-weight:600;cursor:grab;
+    user-select:none;touch-action:none}
+  .chip:active{cursor:grabbing}
+  .chip.sel{background:var(--accent);color:#fff}
+  .dnd-rows{display:grid;gap:8px;margin-top:12px}
+  .dnd-row{display:grid;grid-template-columns:1fr minmax(150px,210px);gap:10px;align-items:center;
+    background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .dnd-slot{min-height:42px;border:1px dashed var(--line);border-radius:20px;
+    display:grid;place-items:center;padding:4px;background:#fafaf8;font-size:14px;color:var(--muted)}
+  .dnd-slot::before{content:"σύρε εδώ";color:var(--muted);font-size:13.5px}
+  .dnd-slot.filled::before{content:none}
+  .dnd-slot .chip{cursor:grab}
+  .dnd-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .dnd-tools button{font-size:14px;padding:7px 14px;background:#fff;color:var(--accent);
+    border:2px solid var(--accent);border-radius:9px}
+  .dnd-msg{font-size:14px;font-weight:600;margin-top:8px;min-height:20px}
+  .dnd-msg.ok{color:var(--accent)} .dnd-msg.bad{color:#a33}
+  /* ---------- αυτοέλεγχος λιστών επιλογής ---------- */
+  select.qsel{width:100%;padding:8px;border-radius:8px;border:1px solid var(--line);font:inherit;background:#fff;color:var(--ink)}
+  td select.qsel{padding:4px}
+  .popt{display:none}
+  select.qsel.right{border:2px solid var(--accent);background:var(--accent-soft)}
+  select.qsel.wrong{border:2px solid #a33;background:#fbeaea}
+  input.qin.right{outline:2px solid var(--accent);background:var(--accent-soft)}
+  input.qin.wrong{outline:2px solid #a33;background:#fbeaea}
+  @media (max-width:600px){
+    .bar{position:static;padding:12px 0}
+    .barcard{padding:12px}
+    .btns button{flex:1 1 100%;padding:10px 14px}
+    .dnd-row{grid-template-columns:1fr}
+  }
+
+  /* ---------- διερμηνευτής ΓΛΩΣΣΑΣ ---------- */
+  .glossa-interpreter-wrapper{border:2px solid var(--accent);border-radius:12px;
+    padding:14px;margin:14px 0;background:#fbfdfc}
+  .gl-toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .gl-toolbar.gl-sym{margin-bottom:12px}
+  .gl-chip{font:inherit;font-size:13.5px;font-weight:600;background:#fff;color:var(--accent);
+    border:1px solid var(--accent);border-radius:18px;padding:5px 12px;cursor:pointer}
+  .gl-chip:hover{background:var(--accent-soft)}
+  .gl-sym .gl-chip{font-family:"Cascadia Mono",Consolas,monospace;padding:5px 10px}
+  .gl-grid{display:grid;gap:12px;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+  @media (max-width:720px){ .gl-grid{grid-template-columns:1fr} }
+  .gl-lab{font-size:12.5px;font-weight:700;color:var(--muted);margin:0 0 4px;
+    text-transform:uppercase;letter-spacing:.04em}
+  .gl-code{width:100%;font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+    font-size:14px;line-height:1.65;border:1px solid var(--line);border-radius:8px;padding:10px;
+    background:#fff;resize:vertical;min-height:190px;white-space:pre;overflow-x:auto}
+  .gl-in{width:100%;font-family:"Cascadia Mono",Consolas,monospace;font-size:14px;
+    border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;resize:vertical;min-height:78px}
+  .gl-out{margin:0;background:#1d2424;color:#e8f0ee;border-radius:8px;padding:10px 12px;
+    min-height:86px;max-height:220px;overflow:auto;font-family:"Cascadia Mono",Consolas,monospace;
+    font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .gl-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .gl-btns button{font:inherit;font-size:14.5px;font-weight:700;border-radius:9px;padding:9px 18px;
+    cursor:pointer;background:#fff;color:var(--accent);border:2px solid var(--accent)}
+  .gl-btns .gl-go{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .gl-msg{font-size:14px;font-weight:600;margin-top:10px;min-height:20px;color:var(--muted)}
+  .gl-msg.gl-err{color:#a33}
+  .gl-msg.gl-ok{color:var(--accent)}
+  .gl-tablab{margin-top:12px}
+  .gl-tablebox{overflow:auto;max-height:340px;border-radius:8px}
+  .gl-table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;margin:0}
+  .gl-table th,.gl-table td{border:1px solid var(--line);padding:5px 8px;white-space:nowrap}
+  .gl-table th{position:sticky;top:0;background:#eef3f2;font-size:12.5px}
+  .gl-table .gl-ln{color:var(--muted);text-align:center;width:64px}
+
+
+  /* ---------- φύλλο προχωρημένων ---------- */
+  .lvl{display:inline-block;margin-left:8px;font-size:11.5px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;padding:2px 10px;border-radius:20px;
+    background:#fdeee8;color:#a8400a;border:1px solid #f1cdbe;vertical-align:middle}
+  body.adv-sheet header.top{border-bottom-color:#a8400a}
+  body.adv-sheet .kicker{color:#a8400a}
+  body.adv-sheet .num{background:#a8400a}
+  .advnote{background:#fdeee8;border-left-color:#a8400a}
+  details.theoryfold{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:10px 18px;margin:18px 0}
+  details.theoryfold > summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--book);
+    padding:8px 0;list-style:none}
+  details.theoryfold > summary::-webkit-details-marker{display:none}
+  details.theoryfold > summary::before{content:"▸ ";color:var(--book)}
+  details.theoryfold[open] > summary::before{content:"▾ "}
+
+  /* κενές γραμμές: μόνο στην εκτύπωση */
+  .print-only-lines{display:none}
+
+  .bar{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 22%);
+    padding:24px 0 12px;margin-top:28px}
+  .barcard{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:16px 18px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:11px 20px;cursor:pointer}
+  #saveBtn{background:var(--accent);color:#fff}
+  #saveBtn:hover{background:#08574c}
+  #loadBtn,#printBtn{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+  #loadBtn:hover,#printBtn:hover{background:var(--accent-soft)}
+  button:focus-visible{outline:3px solid #08574c;outline-offset:2px}
+  .bartext{font-size:14px;color:var(--muted)}
+  #status{font-size:14px;font-weight:600;color:var(--accent);margin-top:8px;min-height:20px}
+
+  footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--muted)}
+
+  /* ================= ΕΚΤΥΠΩΣΗ ================= */
+  @media print{
+    @page{ size:A4; margin:14mm 13mm; }
+    body{background:#fff;padding:0;font-size:11.5pt;line-height:1.5}
+    .wrap{max-width:none}
+    .bar,.hint,.dnd-tools,.dnd-msg{display:none !important}
+    /* στο φύλλο προχωρημένων η υπενθύμιση θεωρίας δεν τυπώνεται */
+    details.recap{display:none !important}
+
+    /* ο διερμηνευτής δεν τυπώνεται ποτέ */
+    .glossa-interpreter-wrapper{display:none !important}
+    /* στη θέση του, κενές γραμμές για γράψιμο με στυλό */
+    .print-only-lines{display:block !important;break-inside:avoid;page-break-inside:avoid;margin:8px 0 14px}
+    .print-only-lines .pl-title{font-size:10.5pt;font-weight:700;color:#000;margin:0 0 6px}
+    .print-only-lines .pl-code{font-family:"Cascadia Mono",Consolas,monospace;font-size:10.5pt;
+      line-height:1.9;white-space:pre;border:1px solid #666;padding:8px 10px;margin:0 0 8px}
+    .print-only-lines .pl-line{display:block;border-bottom:1px solid #444;height:9mm}
+
+    header.top{padding-block:0 10px;border-bottom:2px solid #000}
+    .kicker,.sub{color:#000}
+    h1{font-size:18pt;margin:4px 0}
+
+    .phase,.ident,.task,.goals,.note,.book,.defbox{
+      background:#fff !important;border:1px solid #999;border-radius:0;
+      break-inside:avoid;page-break-inside:avoid;margin:10px 0;padding:10px 12px}
+    .goals,.note,.book{border-left:3px solid #000}
+    .book > .src{color:#000}
+    .phase > h2{font-size:13pt;margin-bottom:8px}
+    .num{background:#000 !important;color:#fff !important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .tag{border:1px solid #000 !important;background:none !important;color:#000 !important}
+    h3{font-size:12pt;margin:10px 0 4px}
+
+    pre.algo{background:#fff !important;color:#000 !important;border:1px solid #666;
+      border-radius:0;font-size:10.5pt;padding:8px 10px}
+    pre.algo b{color:#000 !important;font-weight:700}
+    pre.algo i{color:#444 !important}
+    code{background:none;border:1px solid #bbb;padding:0 3px}
+
+    ::placeholder{color:transparent !important;opacity:0 !important}
+    ::-webkit-input-placeholder{color:transparent !important;opacity:0 !important}
+    ::-moz-placeholder{color:transparent !important;opacity:0 !important}
+    :-ms-input-placeholder{color:transparent !important;opacity:0 !important}
+    label{color:#000}
+    input[type=text]{border:0;border-bottom:1px solid #000;border-radius:0;
+      padding:0 0 5mm 0;line-height:1}
+    td input[type=text]{border-bottom:0;padding:0}
+    textarea{border:1px solid #888;border-radius:0;background:#fff;min-height:38mm}
+    textarea.code{min-height:80mm}
+    table{font-size:10.5pt}
+    th{background:#eee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    td{height:16mm;vertical-align:top}
+
+    /* drag & drop στο χαρτί: λίστα όρων + κενά κουτάκια */
+    .dnd-pool{border:1px solid #666;background:#fff !important;min-height:0;padding:8px}
+    .chip{border:1px solid #000;color:#000;background:#fff !important;border-radius:0}
+    .dnd-row{border:1px solid #999;border-radius:0;page-break-inside:avoid}
+    .dnd-slot{border:1px solid #000;border-radius:0;min-height:12mm;background:#fff !important}
+    .dnd-slot::before{content:none !important}
+    .dnd-slot .chip{display:none}
+
+    /* λίστες επιλογής στο χαρτί: επιλογές για τσεκάρισμα */
+    select.qsel{display:none !important}
+    .popt{display:flex !important;flex-wrap:wrap;gap:4px 18px;font-size:11pt;padding:2px 0}
+    .popt.tight{gap:4px 14px;justify-content:center}
+    .popt span{white-space:nowrap}
+    .quiz td{height:auto;vertical-align:middle}
+    textarea:not(.code){min-height:30mm !important}
+    h2,h3,label,.field > p{break-after:avoid;page-break-after:avoid}
+    .field{break-inside:avoid;page-break-inside:avoid}
+
+    /* στο χαρτί η θεωρία των προχωρημένων τυπώνεται ανοιχτή */
+    details.theoryfold{border:1px solid #999;border-radius:0;page-break-inside:auto}
+    details.theoryfold > summary{font-size:12pt}
+    details.theoryfold > div,details.theoryfold > section{display:block !important}
+    .lvl{border:1px solid #000 !important;background:none !important;color:#000 !important}
+    footer{border-top:1px solid #999;font-size:9pt;color:#000}
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Διδακτική ώρα 8 · Κεφάλαιο 2.2.7 · Φύλλο για προχωρημένους</div>
+  <h1>Μεταβλητές, σταθερές και τελεστές</h1>
+  <p class="sub">Εισαγωγή στις Αρχές της Επιστήμης των Η/Υ · Β΄ ΓΕΛ · σχ. έτος 2026-2027</p>
+</header>
+
+<section class="ident">
+  <h2>Η ομάδα μας</h2>
+  <div class="grid3">
+    <div><label for="m1">1ο μέλος</label><input type="text" id="m1" data-field="m1" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="m2">2ο μέλος <span style="font-weight:400">(προαιρετικό)</span></label><input type="text" id="m2" data-field="m2" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="m3">3ο μέλος <span style="font-weight:400">(προαιρετικό)</span></label><input type="text" id="m3" data-field="m3" placeholder="Ονοματεπώνυμο"></div>
+    <div><label for="tmima">Τμήμα</label><input type="text" id="tmima" data-field="tmima" placeholder="π.χ. Β3"></div>
+  </div>
+</section>
+
+<div class="goals">
+  <h2>Τι θα κάνετε σε αυτό το φύλλο</h2>
+  <ul>
+    <li>Να εντοπίζετε και να διορθώνετε λάθη σε εκφράσεις, ξεχωρίζοντας όσα σταματούν την εκτέλεση με μήνυμα από όσα εκτελούνται σιωπηλά και δίνουν λάθος αποτέλεσμα.</li>
+    <li>Να συμπληρώνετε ημιτελή αλγόριθμο επιλέγοντας τους σωστούς τελεστές div και mod, και να ελέγχετε τη λύση σας με ακραίες εισόδους.</li>
+    <li>Να κρίνετε αν μια έκφραση είναι έγκυρη, τεκμηριώνοντας με τους κανόνες του βιβλίου για τους τελεστέους και για την ιεραρχία των πράξεων.</li>
+  </ul>
+</div>
+
+<div class="note advnote">Αυτό το φύλλο είναι η <strong>επέκταση</strong> της ώρας. Το συμπληρώνετε
+αφού ολοκληρώσετε το βασικό φύλλο. Οι δραστηριότητες ανεβάζουν τον πήχη: ζητούν να συνδυάσετε
+όσα μάθατε, να διορθώσετε ή να επεκτείνετε αλγορίθμους.</div>
+
+<details class="recap">
+  <summary>Θεωρία της ώρας — για υπενθύμιση</summary>
+  <h3>Σταθερές</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Σταθερές (σελ. 33)</span>
+    <p>Οι σταθερές στην ψευδογλώσσα μπορεί να είναι αριθμητικές, αλφαριθμητικές ή λογικές. Για το
+    σχηματισμό μιας αριθμητικής σταθεράς χρησιμοποιούνται οι αριθμητικοί χαρακτήρες και πιθανά ένας
+    από τους χαρακτήρες +, −. Επίσης, μπορεί να χρησιμοποιηθεί το κόμμα για το δεκαδικό σημείο.
+    Π.χ. 5, 123,27, −1, 1000000 κ.λπ. Για το σχηματισμό μιας αλφαριθμητικής σταθεράς
+    χρησιμοποιούνται οποιοιδήποτε χαρακτήρες περικλειόμενοι σε διπλά εισαγωγικά. Μια σταθερά μπορεί
+    να έχει οποιοδήποτε πλήθος αριθμητικών ή αλφαριθμητικών χαρακτήρων αντίστοιχα. Οι λογικές
+    σταθερές είναι δύο, η <strong>Αληθής</strong> και <strong>Ψευδής</strong>.</p>
+  </div>
+
+  <h3>Μεταβλητές</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Μεταβλητές (σελ. 33)</span>
+    <p>Για το σχηματισμό του ονόματος μιας μεταβλητής χρησιμοποιείται οποιοσδήποτε αριθμός
+    αλφαβητικών ή αριθμητικών χαρακτήρων και ο χαρακτήρας κάτω παύλα. Ο πρώτος χαρακτήρας της
+    μεταβλητής πρέπει να είναι αλφαβητικός και δεν μπορεί να χρησιμοποιηθεί δεσμευμένη λέξη ως όνομα
+    μεταβλητής. Οι μεταβλητές χαρακτηρίζονται ως αριθμητικές, αλφαριθμητικές ή λογικές ανάλογα με
+    την τιμή που θα αποδοθεί σε αυτές. Πριν από την απόδοση κάποιας τιμής σε μια μεταβλητή (με
+    εντολή εισόδου ή εκχώρησης) η μεταβλητή έχει <strong>απροσδιόριστη τιμή</strong>.</p>
+    <p>Οι σταθερές και οι μεταβλητές καλούνται και <strong>τελεστέοι</strong>.</p>
+  </div>
+
+  <div class="note">Μια χρήσιμη εικόνα: η μεταβλητή είναι ένα <strong>κουτί με όνομα</strong> μέσα
+  στη μνήμη. Το όνομα δεν αλλάζει ποτέ· το περιεχόμενο του κουτιού αλλάζει όσες φορές θέλουμε. Η
+  σταθερά αντίθετα είναι η ίδια η τιμή, γραμμένη μέσα στον αλγόριθμο.</div>
+
+  <h3>Οι τελεστές</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Τελεστές (πλαίσιο, σελ. 34)</span>
+    <div class="scroll">
+    <table>
+      <thead><tr><th style="width:24%">Είδος</th><th style="width:16%">Τελεστής</th><th>Πράξη</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="7">Αριθμητικοί</td><td><code>+</code></td><td>Πρόσθεση</td></tr>
+        <tr><td><code>−</code></td><td>Αφαίρεση</td></tr>
+        <tr><td><code>*</code></td><td>Πολλαπλασιασμός</td></tr>
+        <tr><td><code>/</code></td><td>Διαίρεση</td></tr>
+        <tr><td><code>div</code></td><td>Πηλίκο ακέραιας διαίρεσης</td></tr>
+        <tr><td><code>mod</code></td><td>Υπόλοιπο ακέραιας διαίρεσης</td></tr>
+        <tr><td><code>^</code></td><td>Ύψωση σε δύναμη</td></tr>
+        <tr><td rowspan="6">Σχεσιακοί</td><td><code>=</code></td><td>Ίσο</td></tr>
+        <tr><td><code>&lt;</code></td><td>Μικρότερο από</td></tr>
+        <tr><td><code>&gt;</code></td><td>Μεγαλύτερο από</td></tr>
+        <tr><td><code>≠</code></td><td>Διάφορο</td></tr>
+        <tr><td><code>≤</code></td><td>Μικρότερο ή ίσο</td></tr>
+        <tr><td><code>≥</code></td><td>Μεγαλύτερο ή ίσο</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Λογικοί τελεστές (σελ. 35)</span>
+    <p>Οι λογικοί τελεστές υλοποιούν τις λογικές πράξεις. Το αποτέλεσμα μιας λογικής πράξης είναι
+    Αληθής ή Ψευδής. Λογικοί τελεστές είναι:</p>
+    <ul>
+      <li><strong>όχι</strong> — πράξη άρνησης</li>
+      <li><strong>και</strong> — πράξη σύζευξης</li>
+      <li><strong>ή</strong> — πράξη διάζευξης</li>
+    </ul>
+  </div>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Συναρτησιακοί τελεστές ή Συναρτήσεις (σελ. 35)</span>
+    <p>Μια συνάρτηση χρησιμοποιείται για να εκτελέσει μια προκαθορισμένη λειτουργία. Κάθε συνάρτηση
+    έχει ένα όνομα ακολουθούμενο από ζεύγος παρενθέσεων που περικλείουν μια μεταβλητή ή μια σταθερά
+    ή γενικότερα μια έκφραση. Στην ψευδογλώσσα μπορούν να χρησιμοποιηθούν όλες οι συνηθισμένες
+    συναρτήσεις, όπως οι τριγωνομετρικές ΗΜ(x), ΣΥΝ(x), ΕΦ(x), οι μαθηματικές Α_Τ(x) για την απόλυτη
+    τιμή, Ε(x) για την e<sup>x</sup>, ΛΟΓ(x) για το δεκαδικό λογάριθμο, ΛΝ(x) για το φυσικό
+    λογάριθμο, Τ_Ρ(x) για την τετραγωνική ρίζα, και Α_Μ(x) για το ακέραιο μέρος.</p>
+  </div>
+
+  <h3>Εκφράσεις και ιεραρχία των πράξεων</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Εκφράσεις (σελ. 35)</span>
+    <p>Μια έκφραση μπορεί να είναι μια σταθερά, μια μεταβλητή, μια συνάρτηση ή ένας συνδυασμός
+    σταθερών, μεταβλητών, συναρτήσεων, τελεστών και παρενθέσεων. Σε μία έκφραση που αποτελείται από
+    συνδυασμό στοιχείων, εκτελούνται οι πράξεις επί των σταθερών και μεταβλητών που ορίζουν οι
+    τελεστές. Οι χρησιμοποιούμενοι τελεστές έχουν διαφορετική ιεραρχία. Αυτό σημαίνει ότι κάποιες
+    πράξεις μπορεί να προηγούνται από κάποιες άλλες σε μια έκφραση. Η ιεραρχία των πράξεων είναι η
+    ακόλουθη:</p>
+    <div class="defbox">
+      <p><strong>Α. Αριθμητικοί τελεστές.</strong> Σε κάθε έκφραση που υπάρχουν αριθμητικοί
+      τελεστές, ακολουθείται η προσδιορισμένη από τα μαθηματικά ιεραρχία των πράξεων.</p>
+      <ol>
+        <li>Ύψωση σε δύναμη</li>
+        <li>Πολλαπλασιασμός, Διαίρεση, Πηλίκο ακέραιας διαίρεσης, Υπόλοιπο ακέραιας διαίρεσης</li>
+        <li>Πρόσθεση, Αφαίρεση</li>
+      </ol>
+      <p><strong>Β. Σχεσιακοί τελεστές</strong></p>
+      <p><strong>Γ. Λογικοί τελεστές</strong></p>
+      <ol>
+        <li>όχι</li>
+        <li>και</li>
+        <li>ή</li>
+      </ol>
+      <p>Αν οι πράξεις είναι ίδιας ιεραρχίας, τότε εκτελούνται από τα αριστερά προς τα δεξιά.</p>
+    </div>
+    <svg viewBox="0 0 430 220" role="img" aria-label="Η ιεραρχία των πράξεων σε τρία επίπεδα" style="max-width:100%;height:auto;display:block;margin:10px auto">
+  <defs><marker id="ar08" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#1b1b1a"/></marker></defs>
+  <g fill="none" stroke="#1b1b1a" stroke-width="1.6" marker-end="url(#ar08)">
+    <path d="M215,52 L215,78"/>
+    <path d="M215,130 L215,156"/>
+  </g>
+  <rect x="35" y="8" width="360" height="44" rx="4" fill="#e6f2f0" stroke="#0b6b5e" stroke-width="1.6"/>
+  <rect x="35" y="86" width="360" height="44" rx="4" fill="#fff" stroke="#0b6b5e" stroke-width="1.6"/>
+  <rect x="35" y="164" width="360" height="44" rx="4" fill="#fff" stroke="#0b6b5e" stroke-width="1.6"/>
+  <text x="215" y="27" text-anchor="middle" font-size="14" font-weight="700" fill="#0b6b5e">Α. Αριθμητικοί τελεστές</text>
+  <text x="215" y="44" text-anchor="middle" font-size="12.5" fill="#1b1b1a">^ · μετά * / div mod · μετά + −</text>
+  <text x="215" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#0b6b5e">Β. Σχεσιακοί τελεστές</text>
+  <text x="215" y="122" text-anchor="middle" font-size="12.5" fill="#1b1b1a">= &lt; &gt; ≠ ≤ ≥</text>
+  <text x="215" y="183" text-anchor="middle" font-size="14" font-weight="700" fill="#0b6b5e">Γ. Λογικοί τελεστές</text>
+  <text x="215" y="200" text-anchor="middle" font-size="12.5" fill="#1b1b1a">όχι · μετά και · μετά ή</text>
+</svg>
+    <p>Οι τελεστέοι ενός αριθμητικού τελεστή πρέπει να είναι αριθμητικές εκφράσεις.
+    (π.χ. α + β^3)</p>
+    <p>Στις λογικές εκφράσεις μπορούν να χρησιμοποιηθούν όλοι οι τελεστές. Αν μία λογική έκφραση
+    περιλαμβάνει τελεστές, τότε ένας τουλάχιστον πρέπει να είναι λογικός ή συγκριτικός.
+    (π.χ. α + β^3 &gt; 5 και γ / 3 &lt; 2)</p>
+    <p>Οι συγκριτικοί τελεστές συνδυάζονται με εκφράσεις ιδίου τύπου, ενώ οι λογικοί τελεστές μόνο
+    με λογικές εκφράσεις. (π.χ. α + β &gt; 3, ''ΑΒ'' &lt; ''Γ'')</p>
+    <p>Οι συγκρίσεις λογικών εκφράσεων έχουν νόημα μόνο στην περίπτωση του = και ≠.</p>
+  </div>
+
+  <h3>Αριθμητικές εκφράσεις</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Αριθμητικές εκφράσεις (σελ. 36)</span>
+    <p>Στην έκφραση 5 + 12 / 3 * 2 − 1 οι πράξεις εκτελούνται με την επόμενη σειρά:</p>
+    <ol>
+      <li>12 / 3 (= 4)</li>
+      <li>4 * 2 (= 8)</li>
+      <li>5 + 8 (= 13)</li>
+      <li>13 − 1 (= 12)</li>
+    </ol>
+    <p>Σε μια έκφραση μπορούν να χρησιμοποιηθούν και παρενθέσεις. Οι παρενθέσεις μπορεί να
+    μεταβάλλουν την προτεραιότητα των πράξεων.</p>
+    <p>Στην έκφραση 4 * (1 + 2) εκτελείται πρώτα η πρόσθεση (1 + 2 = 3) και μετά ο πολλαπλασιασμός
+    (4 * 3 = 12).</p>
+    <p>Παρατίθεται ένας πίνακας με τη γραφή μερικών μαθηματικών τύπων ως εκφράσεις της
+    ψευδογλώσσας.</p>
+    <p><em>Πίνακας 2.4. Μαθηματικοί τύποι ως εκφράσεις της ψευδογλώσσας</em></p>
+    <div class="scroll">
+    <table>
+      <thead><tr><th style="width:44%">Μαθηματικός τύπος</th><th>Έκφραση ψευδογλώσσας</th></tr></thead>
+      <tbody>
+        <tr><td>(x − y) : z, δηλαδή το κλάσμα με αριθμητή x − y και παρονομαστή z</td><td><code>(x - y) / z</code></td></tr>
+        <tr><td>το κλάσμα με αριθμητή x·y και παρονομαστή z + 1</td><td><code>x * y / (z + 1)</code></td></tr>
+        <tr><td>(x<sup>2</sup>)<sup>3</sup></td><td><code>(x^2)^3</code></td></tr>
+        <tr><td>x<sup>2<sup>3</sup></sup></td><td><code>x^(2^3)</code></td></tr>
+        <tr><td>x·(−y)</td><td><code>x * (-y)</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="defbox">
+      <p>Στην ακέραια διαίρεση οι τελεστέοι των τελεστών <strong>div</strong> και
+      <strong>mod</strong> είναι <strong>υποχρεωτικά θετικοί ακέραιοι αριθμοί</strong>.</p>
+    </div>
+  </div>
+
+  <h3>Λογικές εκφράσεις</h3>
+
+  <div class="book">
+    <span class="src">Από το βιβλίο — 2.2.7 Λογικές εκφράσεις (σελ. 36)</span>
+    <p>Οι σχεσιακοί τελεστές χρησιμοποιούνται για τη σύγκριση δύο τιμών. Το αποτέλεσμα μιας
+    σύγκρισης μπορεί να είναι είτε Αληθής είτε Ψευδής.</p>
+    <p>Στην έκφραση x + y &lt; (z − 1) / t το αποτέλεσμα είναι Αληθής, αν το αποτέλεσμα της πράξης
+    x + y είναι μικρότερο από το αποτέλεσμα της πράξης z − 1 διαιρούμενο δια t.</p>
+    <p>Οι σχεσιακοί τελεστές μπορούν να χρησιμοποιηθούν και με αλφαριθμητικούς τελεστέους. Στην
+    ψευδογλώσσα θα γίνεται σύγκριση αλφαριθμητικών εκφράσεων που περιέχουν μόνο τα κεφαλαία γράμματα
+    του ελληνικού αλφαβήτου, στα οποία ισχύει η αλφαβητική σειρά. Για παράδειγμα η λογική έκφραση
+    ''ΑΔΓ'' &gt; ''ΑΒΚ'' είναι αληθής, διότι κατά τη σύγκριση χαρακτήρα προς χαρακτήρα από αριστερά
+    προς τα δεξιά εντοπίζεται ότι το γράμμα Δ είναι διαφορετικό και μεγαλύτερο του γράμματος Β.</p>
+    <p>Οι λογικοί τελεστές πραγματοποιούν τις λογικές πράξεις σε μια έκφραση. Το αποτέλεσμα μιας
+    λογικής πράξης είναι πάντα Αληθής ή Ψευδής, σύμφωνα με τον επόμενο πίνακα τιμών, όπου με Χ και Υ
+    εννοούνται δύο λογικές εκφράσεις, στις οποίες χρησιμοποιούνται μόνο αριθμητικοί και σχεσιακοί
+    τελεστές.</p>
+    <p><em>Πίνακας 2.5. Πίνακας τιμών δύο λογικών εκφράσεων (όχι, και, ή)</em></p>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>Χ</th><th>Υ</th><th>όχι Χ</th><th>Χ και Υ</th><th>Χ ή Υ</th></tr></thead>
+      <tbody>
+        <tr><td>Αληθής</td><td>Αληθής</td><td>Ψευδής</td><td>Αληθής</td><td>Αληθής</td></tr>
+        <tr><td>Αληθής</td><td>Ψευδής</td><td>Ψευδής</td><td>Ψευδής</td><td>Αληθής</td></tr>
+        <tr><td>Ψευδής</td><td>Αληθής</td><td>Αληθής</td><td>Ψευδής</td><td>Αληθής</td></tr>
+        <tr><td>Ψευδής</td><td>Ψευδής</td><td>Αληθής</td><td>Ψευδής</td><td>Ψευδής</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>Σε μια λογική έκφραση οι λογικές πράξεις εκτελούνται μετά τις αριθμητικές και συγκριτικές.</p>
+    <p>Η σχέση 0 &lt; x &lt; 2k + 1 γράφεται στην ψευδογλώσσα <code>x &gt; 0 και x &lt; 2 * k + 1</code>
+    και είναι αληθής, αν x θετικό και ταυτόχρονα μικρότερο του 2 * k + 1.</p>
+    <p>Ο τελεστής όχι έχει έναν τελεστέο, ενώ οι και, ή έχουν δύο (ή περισσότερους).</p>
+    <p>Συνιστάται ανεπιφύλακτα να χρησιμοποιούνται παρενθέσεις όταν σε έκφραση υπάρχουν πολλοί
+    λογικοί τελεστές.</p>
+  </div>
+
+  <div class="note">Ο <strong>πίνακας τιμών</strong> του διερμηνευτή δείχνει, γραμμή προς γραμμή,
+  ποια τιμή πήρε κάθε μεταβλητή. Είναι το εργαλείο με το οποίο θα ελέγχετε από εδώ και πέρα αν μια
+  έκφραση υπολόγισε αυτό που νομίζατε.</div>
+</details>
+
+<section class="phase">
+  <h2><span class="num">★</span> Δραστηριότητες για προχωρημένους</h2>
+  <div class="task advanced">
+    <h3>Δραστηριότητα 1 — Λανθασμένες εκφράσεις — βρείτε τα τρία λάθη και διορθώστε τα<span class="tag adv">Για προχωρημένους</span></h3>
+    <p>Ο παρακάτω αλγόριθμος γράφτηκε για να υπολογίζει τον <strong>μέσο όρο</strong> τριών βαθμών,
+    το <strong>υπόλοιπο</strong> της διαίρεσης του πρώτου βαθμού με το 4, και να εμφανίζει αν ο μέσος
+    όρος ξεπερνά τη βάση. Έχει <strong>τρία</strong> λάθη — και μόνο το ένα θα σας το πει ο
+    διερμηνευτής. Εκτελέστε τον με εισόδους 10, 14, 18.</p>
+
+    <div class="glossa-interpreter-wrapper" data-field="gb1" data-inputs="10&#10;14&#10;18">
+<script type="text/glossa">
+Αλγόριθμος Βαθμοί_λάθος
+    Διάβασε α, β, γ
+    μο ← α + β + γ / 3
+    Εμφάνισε 'Μέσος όρος:', μο
+    υπολ ← α mod 2.5
+    Εμφάνισε 'Υπόλοιπο:', υπολ
+    Εμφάνισε 'Πάνω από τη βάση:', μο > 10 και μο
+Τέλος Βαθμοί_λάθος
+</script>
+    </div>
+    <div class="print-only-lines">
+      <p class="pl-title">Ο λανθασμένος αλγόριθμος:</p>
+<pre class="pl-code">Αλγόριθμος Βαθμοί_λάθος
+    Διάβασε α, β, γ
+    μο ← α + β + γ / 3
+    Εμφάνισε &#39;Μέσος όρος:&#39;, μο
+    υπολ ← α mod 2.5
+    Εμφάνισε &#39;Υπόλοιπο:&#39;, υπολ
+    Εμφάνισε &#39;Πάνω από τη βάση:&#39;, μο &gt; 10 και μο
+Τέλος Βαθμοί_λάθος</pre>
+      <p class="pl-title">Ο διορθωμένος αλγόριθμος:</p>
+      <span class="pl-line"></span><span class="pl-line"></span><span class="pl-line"></span>
+      <span class="pl-line"></span><span class="pl-line"></span><span class="pl-line"></span>
+      <span class="pl-line"></span><span class="pl-line"></span>
+    </div>
+
+    <p>Πριν διορθώσετε, συμπληρώστε τι <em>περιμένατε</em> και τι <em>έγινε</em> σε κάθε γραμμή.</p>
+
+    <div class="quiz">
+    <div class="scroll">
+    <table>
+      <thead><tr>
+        <th style="width:32%">Γραμμή</th><th style="width:22%">Τι περιμέναμε</th>
+        <th style="width:22%">Τι έδωσε</th><th style="width:24%">Σιωπηλό λάθος ή μήνυμα;</th></tr></thead>
+      <tbody>
+        <tr><td><code>μο ← α + β + γ / 3</code></td>
+            <td><input type="text" data-field="eb1a" class="qin" data-answer="14"></td><td><input type="text" data-field="eb1b" class="qin" data-answer="30"></td><td><select data-field="eb1c" class="qsel" data-answer="Σιωπηλό λάθος" aria-label="Σιωπηλό λάθος ή μήνυμα: γραμμή 1"><option value="">–</option><option value="Σιωπηλό λάθος">Σιωπηλό λάθος</option><option value="Μήνυμα">Μήνυμα</option></select></td></tr>
+        <tr><td><code>υπολ ← α mod 2.5</code></td>
+            <td><input type="text" data-field="eb2a"></td><td><input type="text" data-field="eb2b"></td><td><select data-field="eb2c" class="qsel" data-answer="Μήνυμα" aria-label="Σιωπηλό λάθος ή μήνυμα: γραμμή 2"><option value="">–</option><option value="Σιωπηλό λάθος">Σιωπηλό λάθος</option><option value="Μήνυμα">Μήνυμα</option></select></td></tr>
+        <tr><td><code>μο &gt; 10 και μο</code></td>
+            <td><input type="text" data-field="eb3a"></td><td><input type="text" data-field="eb3b"></td><td><input type="text" data-field="eb3c"></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="dnd-tools">
+      <button type="button" data-qact="check">Έλεγχος</button>
+      <button type="button" data-qact="clear">Καθάρισμα</button>
+    </div>
+    <div class="dnd-msg"></div>
+  </div>
+
+    <div class="field">
+      <label for="b1">1ο λάθος. Τι ακριβώς υπολογίζει η έκφραση <code>α + β + γ / 3</code>, με ποια
+      σειρά πράξεων, και πώς διορθώνεται;</label>
+      <textarea id="b1" data-field="b1" style="min-height:56px"></textarea>
+    </div>
+    <div class="field">
+      <label for="b2">2ο λάθος. Ποιον κανόνα του βιβλίου για τους τελεστέους των <code>div</code> και
+      <code>mod</code> παραβιάζει η γραμμή; Γράψτε τον κανόνα και τη διόρθωση.</label>
+      <textarea id="b2" data-field="b2" style="min-height:56px"></textarea>
+    </div>
+    <div class="field">
+      <label for="b3">3ο λάθος. Το βιβλίο λέει ότι οι λογικοί τελεστές συνδυάζονται <em>μόνο</em> με
+      λογικές εκφράσεις. Ποιος τελεστέος του <code>και</code> δεν είναι λογική έκφραση, και πώς
+      γράφεται σωστά το ζητούμενο «ο μέσος όρος ξεπερνά τη βάση»;</label>
+      <textarea id="b3" data-field="b3" style="min-height:60px"></textarea>
+    </div>
+    <div class="field">
+      <label for="b4">Διορθώστε και τα τρία και ξαναεκτελέστε με εισόδους <strong>−10, 14, 18</strong>.
+      Το <code>mod</code> εξακολουθεί να είναι σύμφωνο με το βιβλίο; Τι σας διδάσκει αυτό για τη
+      σχέση «ο διερμηνευτής το δέχτηκε» και «είναι σωστό»;</label>
+      <textarea id="b4" data-field="b4" style="min-height:60px"></textarea>
+    </div>
+    <p class="hint">Ένα λάθος που δίνει μήνυμα το βρίσκετε σε δευτερόλεπτα. Ένα λάθος που εκτελείται
+    κανονικά και βγάζει απλώς λάθος νούμερο μπορεί να μείνει κρυμμένο για πάντα.</p>
+  </div>
+  <div class="task advanced">
+    <h3>Δραστηριότητα 2 — Ημιτελής αλγόριθμος — τα ψηφία ενός τετραψήφιου<span class="tag adv">Για προχωρημένους</span></h3>
+    <p>Ο αλγόριθμος διαβάζει έναν <strong>τετραψήφιο θετικό ακέραιο</strong>, ξεχωρίζει τα τέσσερα
+    ψηφία του, και εμφανίζει το άθροισμά τους καθώς και τον αριθμό γραμμένο ανάποδα. Χρησιμοποιεί
+    μόνο <code>div</code> και <code>mod</code>.</p>
+
+    <p>Λείπουν <strong>οκτώ</strong> κομμάτια, σημειωμένα με <code>___</code>. Συμπληρώστε τα και
+    εκτελέστε με είσοδο <strong>5308</strong>: πρέπει να δώσει ψηφία 5, 3, 0, 8, άθροισμα 16 και
+    ανάποδα 8035.</p>
+
+    <div class="glossa-interpreter-wrapper" data-field="gb2" data-inputs="5308">
+<script type="text/glossa">
+Αλγόριθμος Ψηφία
+    Διάβασε Ν
+    χιλ ← Ν ___ 1000
+    υπ1 ← Ν ___ 1000
+    εκ ← υπ1 ___ 100
+    υπ2 ← υπ1 ___ 100
+    δεκ ← υπ2 ___ 10
+    μον ← υπ2 ___ 10
+    άθροισμα ← χιλ + εκ + δεκ + ___
+    ανάποδα ← μον * 1000 + δεκ * 100 + εκ * ___ + χιλ
+    Εμφάνισε 'Ψηφία:', χιλ, εκ, δεκ, μον
+    Εμφάνισε 'Άθροισμα:', άθροισμα
+    Εμφάνισε 'Ανάποδα:', ανάποδα
+Τέλος Ψηφία
+</script>
+    </div>
+    <div class="print-only-lines">
+      <p class="pl-title">Συμπληρώστε τον αλγόριθμο:</p>
+<pre class="pl-code">Αλγόριθμος Ψηφία
+    Διάβασε Ν
+    χιλ ← Ν ___ 1000
+    υπ1 ← Ν ___ 1000
+    εκ ← υπ1 ___ 100
+    υπ2 ← υπ1 ___ 100
+    δεκ ← υπ2 ___ 10
+    μον ← υπ2 ___ 10
+    άθροισμα ← χιλ + εκ + δεκ + ___
+    ανάποδα ← μον * 1000 + δεκ * 100 + εκ * ___ + χιλ
+    Εμφάνισε &#39;Ψηφία:&#39;, χιλ, εκ, δεκ, μον
+    Εμφάνισε &#39;Άθροισμα:&#39;, άθροισμα
+    Εμφάνισε &#39;Ανάποδα:&#39;, ανάποδα
+Τέλος Ψηφία</pre>
+    </div>
+
+    <p>Ελέγξτε τον με τρεις ακόμη εισόδους και συμπληρώστε <strong>πρώτα</strong> την πρόβλεψή σας.</p>
+
+    <div class="quiz">
+    <div class="scroll">
+    <table>
+      <thead><tr><th style="width:19%">Είσοδος</th><th style="width:27%">Ψηφία</th>
+        <th style="width:27%">Άθροισμα</th><th style="width:27%">Ανάποδα</th></tr></thead>
+      <tbody>
+        <tr><td>1000</td><td><input type="text" data-field="db1a" class="qin" data-answer="1 0 0 0|1,0,0,0"></td><td><input type="text" data-field="db1b" class="qin" data-answer="1"></td><td><input type="text" data-field="db1c" class="qin" data-answer="1|0001"></td></tr>
+        <tr><td>9999</td><td><input type="text" data-field="db2a" class="qin" data-answer="9 9 9 9|9,9,9,9"></td><td><input type="text" data-field="db2b" class="qin" data-answer="36"></td><td><input type="text" data-field="db2c" class="qin" data-answer="9999"></td></tr>
+        <tr><td>2050</td><td><input type="text" data-field="db3a" class="qin" data-answer="2 0 5 0|2,0,5,0"></td><td><input type="text" data-field="db3b" class="qin" data-answer="7"></td><td><input type="text" data-field="db3c" class="qin" data-answer="502|0502"></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="dnd-tools">
+      <button type="button" data-qact="check">Έλεγχος</button>
+      <button type="button" data-qact="clear">Καθάρισμα</button>
+    </div>
+    <div class="dnd-msg"></div>
+  </div>
+
+    <div class="field">
+      <label for="b5">Η είσοδος 2050 δίνει «ανάποδα» έναν αριθμό που αρχίζει από μηδέν. Τι εμφανίζει
+      τελικά ο διερμηνευτής και γιατί; Είναι λάθος του αλγορίθμου ή του <em>προβλήματος</em>;</label>
+      <textarea id="b5" data-field="b5" style="min-height:60px"></textarea>
+    </div>
+    <div class="field">
+      <label for="b6">Γενικεύστε: σε ένα ζεύγος γραμμών <code>π ← Ν div κ</code> και
+      <code>υ ← Ν mod κ</code>, τι εκφράζει πάντα ο συνδυασμός <code>π * κ + υ</code>; Δοκιμάστε το
+      με τα δικά σας νούμερα πριν απαντήσετε.</label>
+      <textarea id="b6" data-field="b6" style="min-height:56px"></textarea>
+    </div>
+    <p class="hint">Δύο από τα οκτώ κενά <em>δεν</em> είναι τελεστές. Κοιτάξτε προσεκτικά τις δύο
+    τελευταίες γραμμές υπολογισμού.</p>
+  </div>
+  <div class="task advanced">
+    <h3>Δραστηριότητα 3 — Έγκυρη ή άκυρη έκφραση; — οι κανόνες του βιβλίου<span class="tag adv">Για προχωρημένους</span></h3>
+    <p>Το βιβλίο δεν δίνει μόνο τελεστές· δίνει και <strong>κανόνες</strong> για το τι επιτρέπεται να
+    συνδυαστεί με τι. Για κάθε έκφραση επιλέξτε <strong>ΕΓΚΥΡΗ</strong> ή <strong>ΑΚΥΡΗ</strong> και
+    γράψτε δίπλα τον κανόνα που το κρίνει. Υποθέστε ότι τα <code>α</code>, <code>β</code>, <code>x</code>
+    είναι αριθμητικές μεταβλητές.</p>
+
+    <div class="quiz">
+    <div class="scroll">
+    <table>
+      <thead><tr>
+        <th style="width:30%">Έκφραση</th><th style="width:18%">Έγκυρη / Άκυρη</th>
+        <th style="width:52%">Ο κανόνας του βιβλίου που το κρίνει</th></tr></thead>
+      <tbody>
+        <tr><td><code>α + β ^ 3</code></td>
+            <td><select data-field="rb1a" class="qsel" data-answer="ΕΓΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 1"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb1b"></td></tr>
+        <tr><td><code>α + β ^ 3 &gt; 5 και β / 3 &lt; 2</code></td>
+            <td><select data-field="rb2a" class="qsel" data-answer="ΕΓΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 2"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb2b"></td></tr>
+        <tr><td><code>α και β</code></td>
+            <td><select data-field="rb3a" class="qsel" data-answer="ΑΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 3"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb3b"></td></tr>
+        <tr><td><code>7.5 div 2</code></td>
+            <td><select data-field="rb4a" class="qsel" data-answer="ΑΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 4"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb4b"></td></tr>
+        <tr><td><code>-9 mod 4</code></td>
+            <td><select data-field="rb5a" class="qsel" data-answer="ΑΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 5"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb5b"></td></tr>
+        <tr><td><code>(α &gt; 0) &gt; (β &gt; 0)</code></td>
+            <td><select data-field="rb6a" class="qsel" data-answer="ΑΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 6"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb6b"></td></tr>
+        <tr><td><code>(α &gt; 0) = (β &gt; 0)</code></td>
+            <td><select data-field="rb7a" class="qsel" data-answer="ΕΓΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 7"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb7b"></td></tr>
+        <tr><td><code>&#39;ΑΔΓ&#39; &gt; &#39;ΑΒΚ&#39;</code></td>
+            <td><select data-field="rb8a" class="qsel" data-answer="ΕΓΚΥΡΗ" aria-label="Έγκυρη ή άκυρη: έκφραση 8"><option value="">–</option><option value="ΕΓΚΥΡΗ">ΕΓΚΥΡΗ</option><option value="ΑΚΥΡΗ">ΑΚΥΡΗ</option></select></td><td><input type="text" data-field="rb8b"></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="dnd-tools">
+      <button type="button" data-qact="check">Έλεγχος</button>
+      <button type="button" data-qact="clear">Καθάρισμα</button>
+    </div>
+    <div class="dnd-msg"></div>
+  </div>
+
+    <p>Επαληθεύστε τις <em>έγκυρες</em> στον διερμηνευτή. Έπειτα προσθέστε μόνοι σας μία-μία τις
+    άκυρες και καταγράψτε το μήνυμα που παίρνετε.</p>
+
+    <div class="glossa-interpreter-wrapper" data-field="gb3" data-inputs="4&#10;3">
+<script type="text/glossa">
+Αλγόριθμος Έλεγχος_εκφράσεων
+    Διάβασε α, β
+    Εμφάνισε α + β ^ 3
+    Εμφάνισε α + β ^ 3 > 5 και β / 3 < 2
+    Εμφάνισε (α > 0) = (β > 0)
+    Εμφάνισε 'ΑΔΓ' > 'ΑΒΚ'
+Τέλος Έλεγχος_εκφράσεων
+</script>
+    </div>
+    <div class="print-only-lines">
+      <p class="pl-title">Ο αλγόριθμος του διερμηνευτή:</p>
+<pre class="pl-code">Αλγόριθμος Έλεγχος_εκφράσεων
+    Διάβασε α, β
+    Εμφάνισε α + β ^ 3
+    Εμφάνισε α + β ^ 3 &gt; 5 και β / 3 &lt; 2
+    Εμφάνισε (α &gt; 0) = (β &gt; 0)
+    Εμφάνισε &#39;ΑΔΓ&#39; &gt; &#39;ΑΒΚ&#39;</pre>
+      <p class="pl-title">Τα μηνύματα που πήραμε για τις άκυρες:</p>
+      <span class="pl-line"></span><span class="pl-line"></span><span class="pl-line"></span>
+      <span class="pl-line"></span>
+    </div>
+
+    <div class="field">
+      <label for="b7">Δύο γραμμές του πίνακα διαφέρουν <em>μόνο</em> στον σχεσιακό τελεστή, και όμως
+      η μία είναι έγκυρη και η άλλη άκυρη. Ποιες είναι, και ποια ακριβώς πρόταση του βιβλίου τις
+      ξεχωρίζει;</label>
+      <textarea id="b7" data-field="b7" style="min-height:60px"></textarea>
+    </div>
+    <div class="field">
+      <label for="b8">Η τελευταία έκφραση βγαίνει Αληθής. Εξηγήστε <em>πώς</em> γίνεται η σύγκριση
+      χαρακτήρα προς χαρακτήρα, και γράψτε ένα δικό σας ζεύγος λέξεων όπου η σύγκριση κρίνεται στον
+      <strong>τρίτο</strong> χαρακτήρα.</label>
+      <textarea id="b8" data-field="b8" style="min-height:60px"></textarea>
+    </div>
+  </div>
+  <div class="task advanced">
+    <h3>Δραστηριότητα 4 — Λογικές εκφράσεις — ο Πίνακας 2.5 και η δύναμη της παρένθεσης<span class="tag adv">Για προχωρημένους</span></h3>
+    <p>Ο αλγόριθμος διαβάζει δύο αριθμούς <code>x</code> και <code>k</code> και εμφανίζει την τιμή
+    τεσσάρων λογικών εκφράσεων. <strong>Πρώτα επιλέξτε τις προβλέψεις σας</strong> με βάση τον Πίνακα
+    2.5 και την ιεραρχία, και μόνο μετά εκτελέστε.</p>
+
+    <div class="quiz">
+    <div class="scroll">
+    <table>
+      <thead><tr>
+        <th style="width:10%">x</th><th style="width:10%">k</th>
+        <th style="width:22%">x &gt; 0 και x &lt; 2 * k + 1</th>
+        <th style="width:18%">όχι (x &gt; 0)</th>
+        <th style="width:18%">x &gt; 0 ή x &gt; 100</th>
+        <th style="width:22%">x &gt; 0 και x = 10 ή x &lt; 10</th></tr></thead>
+      <tbody>
+        <tr><td>5</td><td>3</td><td><select data-field="lb1a" class="qsel" data-answer="Αληθής" aria-label="x = 5, έκφραση 1"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb1b" class="qsel" data-answer="Ψευδής" aria-label="x = 5, έκφραση 2"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb1c" class="qsel" data-answer="Αληθής" aria-label="x = 5, έκφραση 3"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb1d" class="qsel" data-answer="Αληθής" aria-label="x = 5, έκφραση 4"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td></tr>
+        <tr><td>−1</td><td>3</td><td><select data-field="lb2a" class="qsel" data-answer="Ψευδής" aria-label="x = −1, έκφραση 1"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb2b" class="qsel" data-answer="Αληθής" aria-label="x = −1, έκφραση 2"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb2c" class="qsel" data-answer="Ψευδής" aria-label="x = −1, έκφραση 3"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb2d" class="qsel" data-answer="Αληθής" aria-label="x = −1, έκφραση 4"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td></tr>
+        <tr><td>20</td><td>3</td><td><select data-field="lb3a" class="qsel" data-answer="Ψευδής" aria-label="x = 20, έκφραση 1"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb3b" class="qsel" data-answer="Ψευδής" aria-label="x = 20, έκφραση 2"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb3c" class="qsel" data-answer="Αληθής" aria-label="x = 20, έκφραση 3"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb3d" class="qsel" data-answer="Ψευδής" aria-label="x = 20, έκφραση 4"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td></tr>
+        <tr><td>10</td><td>3</td><td><select data-field="lb4a" class="qsel" data-answer="Ψευδής" aria-label="x = 10, έκφραση 1"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb4b" class="qsel" data-answer="Ψευδής" aria-label="x = 10, έκφραση 2"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb4c" class="qsel" data-answer="Αληθής" aria-label="x = 10, έκφραση 3"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td><td><select data-field="lb4d" class="qsel" data-answer="Αληθής" aria-label="x = 10, έκφραση 4"><option value="">–</option><option value="Αληθής">Αληθής</option><option value="Ψευδής">Ψευδής</option></select></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="dnd-tools">
+      <button type="button" data-qact="check">Έλεγχος</button>
+      <button type="button" data-qact="clear">Καθάρισμα</button>
+    </div>
+    <div class="dnd-msg"></div>
+  </div>
+
+    <div class="glossa-interpreter-wrapper" data-field="gb4" data-inputs="-1&#10;3">
+<script type="text/glossa">
+Αλγόριθμος Λογικές_εκφράσεις
+    Διάβασε x, k
+    Εμφάνισε x > 0 και x < 2 * k + 1
+    Εμφάνισε όχι (x > 0)
+    Εμφάνισε x > 0 ή x > 100
+    Εμφάνισε x > 0 και x = 10 ή x < 10
+Τέλος Λογικές_εκφράσεις
+</script>
+    </div>
+    <div class="print-only-lines">
+      <p class="pl-title">Ο αλγόριθμος του διερμηνευτή:</p>
+<pre class="pl-code">Αλγόριθμος Λογικές_εκφράσεις
+    Διάβασε x, k
+    Εμφάνισε x &gt; 0 και x &lt; 2 * k + 1
+    Εμφάνισε όχι (x &gt; 0)
+    Εμφάνισε x &gt; 0 ή x &gt; 100
+    Εμφάνισε x &gt; 0 και x = 10 ή x &lt; 10</pre>
+      <p class="pl-title">Οι δύο εκδοχές της τέταρτης έκφρασης με παρενθέσεις:</p>
+      <span class="pl-line"></span><span class="pl-line"></span>
+      <p class="pl-title">Η τιμή του x που τις ξεχωρίζει:</p>
+      <span class="pl-line"></span>
+    </div>
+
+    <div class="field">
+      <label for="b9">Η τέταρτη έκφραση για <code>x = −1</code> βγαίνει Αληθής, αν και το x δεν είναι
+      θετικό. Εξηγήστε το βήμα-βήμα με την ιεραρχία των λογικών τελεστών.</label>
+      <textarea id="b9" data-field="b9" style="min-height:60px"></textarea>
+    </div>
+    <div class="field">
+      <label for="b10">Γράψτε την τέταρτη έκφραση με παρενθέσεις <strong>με δύο διαφορετικούς
+      τρόπους</strong>: (α) όπως την εννοεί ο διερμηνευτής, (β) όπως θα την εννοούσε κάποιος που
+      διαβάζει «από αριστερά». Βρείτε τιμή του x για την οποία οι δύο εκδοχές δίνουν
+      <em>διαφορετικό</em> αποτέλεσμα και επαληθεύστε την στον διερμηνευτή.</label>
+      <textarea id="b10" data-field="b10" style="min-height:80px"></textarea>
+    </div>
+    <div class="field">
+      <label for="b11">Το βιβλίο «συνιστά ανεπιφύλακτα» παρενθέσεις όταν υπάρχουν πολλοί λογικοί
+      τελεστές. Με βάση όσα μόλις είδατε, γιατί δεν το αφήνει απλώς στην ιεραρχία;</label>
+      <textarea id="b11" data-field="b11" style="min-height:56px"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="phase">
+  <h2><span class="num">✓</span> Αναστοχασμός</h2>
+  <div class="field">
+    <label for="qc">Ποιο λάθος έκφρασης θεωρείτε πιο επικίνδυνο: αυτό που σταματά την εκτέλεση με μήνυμα ή αυτό που εκτελείται κανονικά και δίνει λάθος νούμερο; Τεκμηριώστε με κάτι που είδατε σήμερα.</label>
+    <textarea id="qc" data-field="qc" style="min-height:60px"></textarea>
+  </div>
+</section>
+
+<div class="bar">
+  <div class="barcard">
+    <div class="btns">
+      <button type="button" id="saveBtn">💾 Αποθήκευση</button>
+      <button type="button" id="loadBtn">📂 Συνέχεια από αποθηκευμένο</button>
+      <button type="button" id="printBtn">🖨️ Εκτύπωση</button>
+      <input type="file" id="fileIn" accept=".html,text/html" hidden>
+    </div>
+    <div id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<footer>
+  Ω08Π · Εισαγωγή στις Αρχές της Επιστήμης των Η/Υ · Β΄ ΓΕΛ · σχ. έτος 2026-2027
+</footer>
+
+</div>
+
+<script>
+/* ================================================================
+   ΔΙΕΡΜΗΝΕΥΤΗΣ ΓΛΩΣΣΑΣ / ΨΕΥΔΟΓΛΩΣΣΑΣ
+   Λεκτικός αναλυτής · Συντακτικός αναλυτής αναδρομικής κατάβασης ·
+   Εκτελεστής με generators και πίνακα τιμών σε κάθε βήμα.
+   ================================================================ */
+(function () {
+'use strict';
+
+/* ---------- βοηθητικά ---------- */
+function deacc(s) {
+  return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+function KW(s) { return deacc(s).toUpperCase().replace(/Σ$/, 'Σ'); }
+
+var LETTER = /[A-Za-zͰ-Ͽἀ-῿_]/;
+var DIGIT = /[0-9]/;
+
+var KEYWORDS = ['ΑΛΓΟΡΙΘΜΟΣ', 'ΤΕΛΟΣ_ΑΝ', 'ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ', 'ΤΕΛΟΣ',
+  'ΔΙΑΒΑΣΕ', 'ΕΜΦΑΝΙΣΕ', 'ΓΡΑΨΕ', 'ΕΚΤΥΠΩΣΕ',
+  'ΑΝ', 'ΤΟΤΕ', 'ΑΛΛΙΩΣ_ΑΝ', 'ΑΛΛΙΩΣ',
+  'ΟΣΟ', 'ΕΠΑΝΑΛΑΒΕ', 'ΜΕΧΡΙΣ_ΟΤΟΥ',
+  'ΓΙΑ', 'ΑΠΟ', 'ΜΕΧΡΙ', 'ΜΕ_ΒΗΜΑ',
+  'ΔΕΔΟΜΕΝΑ', 'ΑΠΟΤΕΛΕΣΜΑΤΑ',
+  'ΠΡΟΓΡΑΜΜΑ', 'ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ', 'ΜΕΤΑΒΛΗΤΕΣ', 'ΣΤΑΘΕΡΕΣ', 'ΑΡΧΗ',
+  'ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ', 'ΑΚΕΡΑΙΕΣ', 'ΠΡΑΓΜΑΤΙΚΕΣ', 'ΧΑΡΑΚΤΗΡΕΣ', 'ΛΟΓΙΚΕΣ',
+  'ΚΑΙ', 'Η', 'ΟΧΙ', 'ΑΛΗΘΗΣ', 'ΨΕΥΔΗΣ', 'DIV', 'MOD'];
+
+var FUNCS = {
+  'Α_Τ': function (x) { return Math.abs(x); },
+  'Α_Μ': function (x) { return Math.trunc(x); },
+  'Τ_Ρ': function (x) { if (x < 0) throw 'Τετραγωνική ρίζα αρνητικού αριθμού.'; return Math.sqrt(x); },
+  'ΗΜ': function (x) { return Math.sin(x * Math.PI / 180); },
+  'ΣΥΝ': function (x) { return Math.cos(x * Math.PI / 180); },
+  'ΕΦ': function (x) { return Math.tan(x * Math.PI / 180); },
+  'Ε': function (x) { return Math.exp(x); },
+  'ΛΟΓ': function (x) { if (x <= 0) throw 'Λογάριθμος μη θετικού αριθμού.'; return Math.log10(x); },
+  'ΛΝ': function (x) { if (x <= 0) throw 'Λογάριθμος μη θετικού αριθμού.'; return Math.log(x); }
+};
+
+function GErr(msg, line) { this.msg = msg; this.line = line; }
+GErr.prototype.toString = function () {
+  return (this.line ? 'Γραμμή ' + this.line + ': ' : '') + this.msg;
+};
+function err(msg, line) { throw new GErr(msg, line); }
+
+/* ---------- λεκτικός αναλυτής ---------- */
+function lex(src) {
+  var toks = [], i = 0, line = 1, n = src.length;
+  while (i < n) {
+    var c = src[i];
+    if (c === '\n') { toks.push({ t: 'NL', line: line }); line++; i++; continue; }
+    if (c === ' ' || c === '\t' || c === '\r') { i++; continue; }
+    if (c === '!') { while (i < n && src[i] !== '\n') i++; continue; }
+
+    // αλφαριθμητικά: '...'  "..."  ''...''  «...»
+    if (c === "'" || c === '"' || c === '«' || c === '“') {
+      var close = c === '«' ? '»' : (c === '“' ? '”' : c);
+      var dbl = (c === "'" && src[i + 1] === "'");
+      var st = i + (dbl ? 2 : 1), v = '';
+      while (st < n) {
+        if (dbl && src[st] === "'" && src[st + 1] === "'") { st += 2; break; }
+        if (!dbl && src[st] === close) { st++; break; }
+        if (src[st] === '\n') err('Το αλφαριθμητικό δεν έκλεισε.', line);
+        v += src[st++];
+      }
+      toks.push({ t: 'STR', v: v, line: line, from: i, to: st });
+      i = st; continue;
+    }
+
+    if (DIGIT.test(c)) {
+      var s0 = i;
+      while (i < n && DIGIT.test(src[i])) i++;
+      if (src[i] === '.' && DIGIT.test(src[i + 1] || '')) { i++; while (i < n && DIGIT.test(src[i])) i++; }
+      toks.push({ t: 'NUM', v: parseFloat(src.slice(s0, i)), line: line, from: s0, to: i });
+      continue;
+    }
+
+    if (LETTER.test(c)) {
+      var s1 = i;
+      while (i < n && (LETTER.test(src[i]) || DIGIT.test(src[i]))) i++;
+      var raw = src.slice(s1, i), up = KW(raw);
+      toks.push({ t: KEYWORDS.indexOf(up) >= 0 ? up : 'ID', v: raw, up: up, line: line, from: s1, to: i });
+      continue;
+    }
+
+    // τελεστές
+    var three = src.substr(i, 3), two = src.substr(i, 2);
+    if (src.substr(i, 3) === '<--') { toks.push({ t: 'ASSIGN', line: line, from: i, to: i + 3 }); i += 3; continue; }
+    if (two === '<-') { toks.push({ t: 'ASSIGN', line: line, from: i, to: i + 2 }); i += 2; continue; }
+    if (c === '←') { toks.push({ t: 'ASSIGN', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (two === '<=' || two === '>=' || two === '<>') { toks.push({ t: 'REL', v: two, line: line, from: i, to: i + 2 }); i += 2; continue; }
+    if (c === '≤') { toks.push({ t: 'REL', v: '<=', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '≥') { toks.push({ t: 'REL', v: '>=', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '≠') { toks.push({ t: 'REL', v: '<>', line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '<' || c === '>' || c === '=') { toks.push({ t: 'REL', v: c, line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === ':') { toks.push({ t: ':', line: line, from: i, to: i + 1 }); i++; continue; }
+    if ('+-*/^(),[]'.indexOf(c) >= 0) { toks.push({ t: c, line: line, from: i, to: i + 1 }); i++; continue; }
+    if (c === '−') { toks.push({ t: '-', line: line, from: i, to: i + 1 }); i++; continue; }
+
+    err('Άγνωστος χαρακτήρας «' + c + '».', line);
+  }
+  toks.push({ t: 'EOF', line: line });
+  return toks;
+}
+
+/* ---------- συντακτικός αναλυτής ---------- */
+function Parser(toks, src) { this.k = toks; this.p = 0; this.src = src; }
+Parser.prototype.pk = function () { return this.k[this.p]; };
+Parser.prototype.at = function (t) { return this.k[this.p].t === t; };
+Parser.prototype.nx = function () { return this.k[this.p++]; };
+Parser.prototype.eat = function (t, what) {
+  if (!this.at(t)) err('Περίμενα ' + (what || t) + ' και βρήκα «' + (this.pk().v || this.pk().t) + '».', this.pk().line);
+  return this.nx();
+};
+Parser.prototype.skipNL = function () { while (this.at('NL')) this.nx(); };
+Parser.prototype.endLine = function () {
+  if (this.at('EOF')) return;
+  if (!this.at('NL')) err('Περίμενα τέλος γραμμής και βρήκα «' + (this.pk().v || this.pk().t) + '».', this.pk().line);
+  this.nx();
+};
+
+Parser.prototype.program = function () {
+  this.skipNL();
+  var name = null, glossa = false;
+  if (this.at('ΑΛΓΟΡΙΘΜΟΣ')) { this.nx(); if (this.at('ID')) name = this.nx().v; this.endLine(); }
+  else if (this.at('ΠΡΟΓΡΑΜΜΑ')) { glossa = true; this.nx(); if (this.at('ID')) name = this.nx().v; this.endLine(); }
+
+  // δηλώσεις ΓΛΩΣΣΑΣ: ΣΤΑΘΕΡΕΣ / ΜΕΤΑΒΛΗΤΕΣ … ΤΥΠΟΣ: ονόματα
+  var consts = [];
+  for (;;) {
+    this.skipNL();
+    if (this.at('ΣΤΑΘΕΡΕΣ')) {
+      this.nx(); this.endLine();
+      for (;;) {
+        this.skipNL();
+        if (!this.at('ID')) break;
+        var cn = this.nx().v;
+        this.eat('REL', 'το σύμβολο =');
+        consts.push({ name: cn, expr: this.expr() });
+        this.endLine();
+      }
+      continue;
+    }
+    if (this.at('ΜΕΤΑΒΛΗΤΕΣ')) {
+      this.nx(); this.endLine();
+      for (;;) {
+        this.skipNL();
+        if (!(this.at('ΑΚΕΡΑΙΕΣ') || this.at('ΠΡΑΓΜΑΤΙΚΕΣ') || this.at('ΧΑΡΑΚΤΗΡΕΣ') || this.at('ΛΟΓΙΚΕΣ'))) break;
+        this.nx(); this.eat(':', 'άνω-κάτω τελεία');
+        while (this.at('ID')) {
+          this.nx();
+          if (this.at('[')) { while (!this.at(']') && !this.at('NL') && !this.at('EOF')) this.nx(); if (this.at(']')) this.nx(); }
+          if (this.at(',')) this.nx(); else break;
+        }
+        this.endLine();
+      }
+      continue;
+    }
+    break;
+  }
+  if (this.at('ΑΡΧΗ')) { this.nx(); this.endLine(); }
+
+  var body = this.block(['ΤΕΛΟΣ', 'ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ']);
+  if (this.at('ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ')) { this.nx(); if (this.at('ID')) this.nx(); }
+  else if (this.at('ΤΕΛΟΣ')) { this.nx(); if (this.at('ID')) this.nx(); }
+  return { name: name, body: body, consts: consts, glossa: glossa };
+};
+
+Parser.prototype.block = function (stop) {
+  var out = [];
+  for (;;) {
+    this.skipNL();
+    if (this.at('EOF')) break;
+    if (stop.indexOf(this.pk().t) >= 0) break;
+    out.push(this.statement());
+  }
+  return out;
+};
+
+Parser.prototype.statement = function () {
+  var tk = this.pk(), ln = tk.line;
+
+  if (tk.t === 'ΔΕΔΟΜΕΝΑ' || tk.t === 'ΑΠΟΤΕΛΕΣΜΑΤΑ') {
+    // Δεδομένα // α, β //   — δηλωτική· την αντιμετωπίζουμε ως Διάβασε / Εμφάνισε
+    this.nx();
+    var names = [];
+    if (this.at('/')) { this.nx(); if (this.at('/')) this.nx(); }
+    while (this.at('ID')) { names.push(this.nx().v); if (this.at(',')) this.nx(); else break; }
+    while (this.at('/')) this.nx();
+    this.endLine();
+    return tk.t === 'ΔΕΔΟΜΕΝΑ'
+      ? { k: 'read', names: names, line: ln, decl: true }
+      : { k: 'print', args: names.map(function (n) { return { k: 'var', name: n, line: ln }; }), line: ln, decl: true };
+  }
+
+  if (tk.t === 'ΔΙΑΒΑΣΕ') {
+    this.nx();
+    var ns = [];
+    do { ns.push(this.eat('ID', 'όνομα μεταβλητής').v); } while (this.at(',') && this.nx());
+    this.endLine();
+    return { k: 'read', names: ns, line: ln };
+  }
+
+  if (tk.t === 'ΕΜΦΑΝΙΣΕ' || tk.t === 'ΓΡΑΨΕ' || tk.t === 'ΕΚΤΥΠΩΣΕ') {
+    this.nx();
+    var args = [this.expr()];
+    while (this.at(',')) { this.nx(); args.push(this.expr()); }
+    this.endLine();
+    return { k: 'print', args: args, line: ln };
+  }
+
+  if (tk.t === 'ΑΝ') return this.ifStmt();
+
+  if (tk.t === 'ΟΣΟ') {
+    this.nx();
+    var c = this.expr(), cs = this.srcOf(c);
+    this.eat('ΕΠΑΝΑΛΑΒΕ', '«επανάλαβε»'); this.endLine();
+    var b = this.block(['ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ']);
+    this.eat('ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ', '«Τέλος_επανάληψης»'); this.endLine();
+    return { k: 'while', cond: c, condSrc: cs, body: b, line: ln };
+  }
+
+  if (tk.t === 'ΕΠΑΝΑΛΑΒΕ' || tk.t === 'ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ') {
+    this.nx(); this.endLine();
+    var b2 = this.block(['ΜΕΧΡΙΣ_ΟΤΟΥ']);
+    var mt = this.eat('ΜΕΧΡΙΣ_ΟΤΟΥ', '«Μέχρις_ότου»');
+    var c2 = this.expr(); this.endLine();
+    return { k: 'repeat', cond: c2, condSrc: this.srcOf(c2), body: b2, line: ln, condLine: mt.line };
+  }
+
+  if (tk.t === 'ΓΙΑ') {
+    this.nx();
+    var v = this.eat('ID', 'όνομα μεταβλητής').v;
+    this.eat('ΑΠΟ', '«από»'); var a = this.expr();
+    this.eat('ΜΕΧΡΙ', '«μέχρι»'); var b3 = this.expr();
+    var st = null;
+    if (this.at('ΜΕ_ΒΗΜΑ')) { this.nx(); st = this.expr(); }
+    this.endLine();
+    var body3 = this.block(['ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ']);
+    this.eat('ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ', '«Τέλος_επανάληψης»'); this.endLine();
+    return { k: 'for', v: v, from: a, to: b3, step: st, body: body3, line: ln };
+  }
+
+  if (tk.t === 'ID') {
+    var name = this.nx().v;
+    this.eat('ASSIGN', 'το σύμβολο εκχώρησης ←');
+    var e = this.expr();
+    this.endLine();
+    return { k: 'assign', name: name, expr: e, line: ln };
+  }
+
+  err('Δεν αναγνωρίζω την εντολή «' + (tk.v || tk.t) + '».', ln);
+};
+
+Parser.prototype.ifStmt = function () {
+  var ln = this.pk().line;
+  this.nx();
+  var c = this.expr(), cs = this.srcOf(c);
+  this.eat('ΤΟΤΕ', '«τότε»');
+  // μονογραμμική μορφή:  Αν συνθήκη τότε <εντολή>
+  if (!this.at('NL') && !this.at('EOF')) {
+    var one = this.statement();
+    return { k: 'if', arms: [{ cond: c, condSrc: cs, body: [one], line: ln }], els: null, line: ln };
+  }
+  this.endLine();
+  var arms = [{ cond: c, condSrc: cs, body: this.block(['ΑΛΛΙΩΣ_ΑΝ', 'ΑΛΛΙΩΣ', 'ΤΕΛΟΣ_ΑΝ']), line: ln }];
+  var els = null;
+  for (;;) {
+    if (this.at('ΑΛΛΙΩΣ_ΑΝ')) {
+      var l2 = this.nx().line;
+      var c2 = this.expr(), cs2 = this.srcOf(c2);
+      this.eat('ΤΟΤΕ', '«τότε»'); this.endLine();
+      arms.push({ cond: c2, condSrc: cs2, body: this.block(['ΑΛΛΙΩΣ_ΑΝ', 'ΑΛΛΙΩΣ', 'ΤΕΛΟΣ_ΑΝ']), line: l2 });
+      continue;
+    }
+    if (this.at('ΑΛΛΙΩΣ')) {
+      this.nx(); this.endLine();
+      els = this.block(['ΤΕΛΟΣ_ΑΝ']);
+    }
+    break;
+  }
+  this.eat('ΤΕΛΟΣ_ΑΝ', '«Τέλος_αν»'); this.endLine();
+  return { k: 'if', arms: arms, els: els, line: ln };
+};
+
+Parser.prototype.srcOf = function (node) {
+  if (node.from == null || node.to == null) return '';
+  return this.src.slice(node.from, node.to).replace(/\s+/g, ' ').trim();
+};
+
+/* --- εκφράσεις: ή, και, όχι, σχεσιακοί, + −, * / div mod, ύψωση σε δύναμη --- */
+Parser.prototype.expr = function () { return this.orE(); };
+Parser.prototype.mk = function (o, a, b, op) {
+  return { k: o, a: a, b: b, op: op, line: a.line, from: a.from, to: (b || a).to };
+};
+Parser.prototype.orE = function () {
+  var a = this.andE();
+  while (this.at('Η')) { this.nx(); var b = this.andE(); a = this.mk('or', a, b); }
+  return a;
+};
+Parser.prototype.andE = function () {
+  var a = this.notE();
+  while (this.at('ΚΑΙ')) { this.nx(); var b = this.notE(); a = this.mk('and', a, b); }
+  return a;
+};
+Parser.prototype.notE = function () {
+  if (this.at('ΟΧΙ')) {
+    var t = this.nx(), b = this.notE();
+    return { k: 'not', a: b, line: t.line, from: t.from, to: b.to };
+  }
+  return this.relE();
+};
+Parser.prototype.relE = function () {
+  var a = this.addE();
+  while (this.at('REL')) { var op = this.nx().v, b = this.addE(); a = this.mk('rel', a, b, op); }
+  return a;
+};
+Parser.prototype.addE = function () {
+  var a = this.mulE();
+  while (this.at('+') || this.at('-')) { var op = this.nx().t, b = this.mulE(); a = this.mk('bin', a, b, op); }
+  return a;
+};
+Parser.prototype.mulE = function () {
+  var a = this.powE();
+  while (this.at('*') || this.at('/') || this.at('DIV') || this.at('MOD')) {
+    var tk = this.nx(), op = tk.t === 'DIV' ? 'div' : tk.t === 'MOD' ? 'mod' : tk.t;
+    var b = this.powE(); a = this.mk('bin', a, b, op);
+  }
+  return a;
+};
+Parser.prototype.powE = function () {
+  var a = this.unary();
+  if (this.at('^')) { this.nx(); var b = this.powE(); return this.mk('bin', a, b, '^'); }
+  return a;
+};
+Parser.prototype.unary = function () {
+  if (this.at('-')) { var t = this.nx(), b = this.unary(); return { k: 'neg', a: b, line: t.line, from: t.from, to: b.to }; }
+  if (this.at('+')) { this.nx(); return this.unary(); }
+  return this.atom();
+};
+Parser.prototype.atom = function () {
+  var t = this.pk();
+  if (t.t === 'NUM') { this.nx(); return { k: 'num', v: t.v, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === 'STR') { this.nx(); return { k: 'str', v: t.v, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === 'ΑΛΗΘΗΣ') { this.nx(); return { k: 'bool', v: true, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === 'ΨΕΥΔΗΣ') { this.nx(); return { k: 'bool', v: false, line: t.line, from: t.from, to: t.to }; }
+  if (t.t === '(') {
+    this.nx(); var e = this.expr();
+    var cl = this.eat(')', 'κλείσιμο παρένθεσης )');
+    e = Object.assign({}, e, { from: t.from, to: cl.to });
+    return e;
+  }
+  if (t.t === 'ID') {
+    this.nx();
+    var fname = KW(t.v);
+    if (this.at('(') && FUNCS[fname]) {
+      this.nx(); var arg = this.expr();
+      var cl2 = this.eat(')', 'κλείσιμο παρένθεσης )');
+      return { k: 'call', f: fname, a: arg, line: t.line, from: t.from, to: cl2.to };
+    }
+    return { k: 'var', name: t.v, line: t.line, from: t.from, to: t.to };
+  }
+  err('Περίμενα τιμή ή μεταβλητή και βρήκα «' + (t.v || t.t) + '».', t.line);
+};
+
+/* ---------- εκτελεστής ---------- */
+function fmt(v) {
+  if (v === true) return 'Αληθής';
+  if (v === false) return 'Ψευδής';
+  if (typeof v === 'number') {
+    if (!isFinite(v)) return '∞';
+    var r = Math.round(v * 1e9) / 1e9;
+    return String(r);
+  }
+  return String(v);
+}
+
+function Machine(src, inputs) {
+  this.src = src;
+  this.inputs = inputs.slice();
+  this.ip = 0;
+  this.vars = {};
+  this.order = [];
+  this.conds = [];
+  this.out = [];
+  this.trace = [];
+  this.steps = 0;
+  this.done = false;
+  this.error = null;
+  var p = new Parser(lex(src), src);
+  this.ast = p.program();
+  this.gen = this.run();
+}
+
+Machine.prototype.set = function (n, v) {
+  if (this.order.indexOf(n) < 0) this.order.push(n);
+  this.vars[n] = v;
+};
+Machine.prototype.get = function (n, line) {
+  if (!(n in this.vars)) err('Η μεταβλητή «' + n + '» δεν έχει πάρει τιμή.', line);
+  return this.vars[n];
+};
+
+Machine.prototype.ev = function (e) {
+  var self = this;
+  switch (e.k) {
+    case 'num': case 'str': case 'bool': return e.v;
+    case 'var': return this.get(e.name, e.line);
+    case 'neg': {
+      var x = this.ev(e.a);
+      if (typeof x !== 'number') err('Το πρόσημο − εφαρμόζεται μόνο σε αριθμούς.', e.line);
+      return -x;
+    }
+    case 'not': {
+      var b = this.ev(e.a);
+      if (typeof b !== 'boolean') err('Ο τελεστής «όχι» εφαρμόζεται μόνο σε λογικές εκφράσεις.', e.line);
+      return !b;
+    }
+    case 'and': case 'or': {
+      var l = this.ev(e.a), r = this.ev(e.b);
+      if (typeof l !== 'boolean' || typeof r !== 'boolean')
+        err('Οι τελεστές «και» / «ή» συνδυάζονται μόνο με λογικές εκφράσεις.', e.line);
+      return e.k === 'and' ? (l && r) : (l || r);
+    }
+    case 'rel': {
+      var a = this.ev(e.a), b2 = this.ev(e.b);
+      if (typeof a !== typeof b2)
+        err('Δεν συγκρίνονται τιμές διαφορετικού τύπου.', e.line);
+      switch (e.op) {
+        case '=': return a === b2;
+        case '<>': return a !== b2;
+        case '<': return a < b2;
+        case '>': return a > b2;
+        case '<=': return a <= b2;
+        case '>=': return a >= b2;
+      }
+      break;
+    }
+    case 'bin': {
+      var x1 = this.ev(e.a), y1 = this.ev(e.b);
+      if (e.op === '+' && (typeof x1 === 'string' || typeof y1 === 'string')) return String(x1) + String(y1);
+      if (typeof x1 !== 'number' || typeof y1 !== 'number')
+        err('Οι αριθμητικοί τελεστές θέλουν αριθμητικές εκφράσεις.', e.line);
+      switch (e.op) {
+        case '+': return x1 + y1;
+        case '-': return x1 - y1;
+        case '*': return x1 * y1;
+        case '/': if (y1 === 0) err('Διαίρεση με το μηδέν.', e.line); return x1 / y1;
+        case '^': return Math.pow(x1, y1);
+        case 'div':
+          if (y1 === 0) err('Διαίρεση με το μηδέν.', e.line);
+          if (x1 % 1 !== 0 || y1 % 1 !== 0) err('Οι τελεστέοι του div πρέπει να είναι ακέραιοι.', e.line);
+          return Math.trunc(x1 / y1);
+        case 'mod':
+          if (y1 === 0) err('Διαίρεση με το μηδέν.', e.line);
+          if (x1 % 1 !== 0 || y1 % 1 !== 0) err('Οι τελεστέοι του mod πρέπει να είναι ακέραιοι.', e.line);
+          return x1 % y1;
+      }
+      break;
+    }
+    case 'call': {
+      var v = this.ev(e.a);
+      if (typeof v !== 'number') err('Η συνάρτηση ' + e.f + ' θέλει αριθμητικό όρισμα.', e.line);
+      try { return FUNCS[e.f](v); } catch (m) { err(String(m), e.line); }
+      break;
+    }
+  }
+  err('Δεν μπόρεσα να υπολογίσω την έκφραση.', e.line);
+};
+
+Machine.prototype.rec = function (r) {
+  if (this.trace.length < 400) this.trace.push(r);
+  else if (this.trace.length === 400) { this.trace.push({ line: '…', note: 'ο πίνακας κόπηκε στις 400 γραμμές' }); }
+};
+
+Machine.prototype.noteCond = function (src) {
+  if (src && this.conds.indexOf(src) < 0) this.conds.push(src);
+};
+
+Machine.prototype.run = function* () {
+  var cs = this.ast.consts || [];
+  for (var i = 0; i < cs.length; i++) this.set(cs[i].name, this.ev(cs[i].expr));
+  yield* this.blk(this.ast.body);
+  this.done = true;
+};
+
+Machine.prototype.blk = function* (b) {
+  for (var i = 0; i < b.length; i++) yield* this.st(b[i]);
+};
+
+Machine.prototype.st = function* (s) {
+  if (++this.steps > 300000) err('Ο αλγόριθμος δεν τερματίζει (ατέρμονας βρόχος;).', s.line);
+  switch (s.k) {
+    case 'assign': {
+      var v = this.ev(s.expr);
+      this.set(s.name, v);
+      var a = {}; a[s.name] = v;
+      this.rec({ line: s.line, assigns: a });
+      yield s.line; return;
+    }
+    case 'read': {
+      var as = {};
+      for (var i = 0; i < s.names.length; i++) {
+        if (!this.inputs.length)
+          err('Τελείωσαν τα δεδομένα εισόδου. Πρόσθεσε τιμές στο πλαίσιο «Δεδομένα εισόδου».', s.line);
+        var raw = this.inputs.shift().trim();
+        var val;
+        if (/^-?\d+(\.\d+)?$/.test(raw)) val = parseFloat(raw);
+        else if (KW(raw) === 'ΑΛΗΘΗΣ') val = true;
+        else if (KW(raw) === 'ΨΕΥΔΗΣ') val = false;
+        else val = raw.replace(/^['"«]|['"»]$/g, '');
+        this.set(s.names[i], val); as[s.names[i]] = val;
+      }
+      this.rec({ line: s.line, assigns: as, read: true });
+      yield s.line; return;
+    }
+    case 'print': {
+      var parts = [];
+      for (var j = 0; j < s.args.length; j++) parts.push(fmt(this.ev(s.args[j])));
+      var text = parts.join(' ');
+      this.out.push(text);
+      this.rec({ line: s.line, out: text });
+      yield s.line; return;
+    }
+    case 'if': {
+      for (var m = 0; m < s.arms.length; m++) {
+        var arm = s.arms[m];
+        var c = this.ev(arm.cond);
+        if (typeof c !== 'boolean') err('Η συνθήκη πρέπει να είναι λογική έκφραση.', arm.line);
+        this.noteCond(arm.condSrc);
+        var cr = {}; cr[arm.condSrc] = c;
+        this.rec({ line: arm.line, conds: cr });
+        yield arm.line;
+        if (c) { yield* this.blk(arm.body); return; }
+      }
+      if (s.els) yield* this.blk(s.els);
+      return;
+    }
+    case 'while': {
+      for (;;) {
+        var cw = this.ev(s.cond);
+        if (typeof cw !== 'boolean') err('Η συνθήκη πρέπει να είναι λογική έκφραση.', s.line);
+        this.noteCond(s.condSrc);
+        var cw2 = {}; cw2[s.condSrc] = cw;
+        this.rec({ line: s.line, conds: cw2 });
+        yield s.line;
+        if (!cw) return;
+        yield* this.blk(s.body);
+        if (++this.steps > 300000) err('Ο βρόχος δεν τερματίζει.', s.line);
+      }
+    }
+    case 'repeat': {
+      for (;;) {
+        yield* this.blk(s.body);
+        var cr2 = this.ev(s.cond);
+        if (typeof cr2 !== 'boolean') err('Η συνθήκη πρέπει να είναι λογική έκφραση.', s.condLine);
+        this.noteCond(s.condSrc);
+        var o = {}; o[s.condSrc] = cr2;
+        this.rec({ line: s.condLine, conds: o });
+        yield s.condLine;
+        if (cr2) return;
+        if (++this.steps > 300000) err('Ο βρόχος δεν τερματίζει.', s.line);
+      }
+    }
+    case 'for': {
+      var a1 = this.ev(s.from), b1 = this.ev(s.to);
+      var st = s.step ? this.ev(s.step) : 1;
+      if (typeof a1 !== 'number' || typeof b1 !== 'number' || typeof st !== 'number')
+        err('Η εντολή Για θέλει αριθμητικές τιμές.', s.line);
+      var cur = a1, guard = 0;
+      for (;;) {
+        if (st > 0 && cur > b1 + 1e-9) break;
+        if (st < 0 && cur < b1 - 1e-9) break;
+        if (st === 0 && a1 > b1) break;
+        this.set(s.v, Math.round(cur * 1e9) / 1e9);
+        var af = {}; af[s.v] = this.vars[s.v];
+        this.rec({ line: s.line, assigns: af });
+        yield s.line;
+        yield* this.blk(s.body);
+        cur += st;
+        if (++guard > 300000) err('Ο βρόχος Για δεν τερματίζει.', s.line);
+      }
+      return;
+    }
+  }
+};
+
+Machine.prototype.step = function () {
+  if (this.done || this.error) return false;
+  try {
+    var r = this.gen.next();
+    if (r.done) this.done = true;
+    return !this.done;
+  } catch (e) {
+    this.error = (e instanceof GErr) ? e.toString() : String(e && e.msg ? e.msg : e);
+    this.done = true;
+    return false;
+  }
+};
+Machine.prototype.runAll = function () { var g = 0; while (this.step()) { if (++g > 400000) break; } };
+
+/* ---------- διεπαφή ---------- */
+var SNIPPETS = [
+  ['Αλγόριθμος', 'Αλγόριθμος Όνομα\n\nΤέλος Όνομα'],
+  ['Διάβασε', 'Διάβασε α'],
+  ['Εμφάνισε', 'Εμφάνισε α'],
+  ['←', ' ← '],
+  ['Αν … τότε', 'Αν συνθήκη τότε\n    \nΤέλος_αν'],
+  ['Αν … αλλιώς', 'Αν συνθήκη τότε\n    \nαλλιώς\n    \nΤέλος_αν'],
+  ['αλλιώς_αν', 'αλλιώς_αν συνθήκη τότε\n    '],
+  ['Όσο', 'Όσο συνθήκη επανάλαβε\n    \nΤέλος_επανάληψης'],
+  ['Για', 'Για i από 1 μέχρι 10\n    \nΤέλος_επανάληψης'],
+  ['Επανάλαβε', 'Επανάλαβε\n    \nΜέχρις_ότου συνθήκη'],
+  ['! σχόλιο', '! '],
+  ['ΠΡΟΓΡΑΜΜΑ (ΓΛΩΣΣΑ)', 'ΠΡΟΓΡΑΜΜΑ Όνομα\nΜΕΤΑΒΛΗΤΕΣ\n    ΑΚΕΡΑΙΕΣ: α\nΑΡΧΗ\n    \nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ']
+];
+var SYMBOLS = ['≥', '≤', '≠', 'και', 'ή', 'όχι', 'div', 'mod', 'Α_Τ(', 'Α_Μ(', 'Τ_Ρ('];
+
+function el(tag, cls, txt) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (txt != null) e.textContent = txt;
+  return e;
+}
+
+function insertAt(ta, text) {
+  var s = ta.selectionStart, e = ta.selectionEnd, v = ta.value;
+  ta.value = v.slice(0, s) + text + v.slice(e);
+  var pos = s + text.length;
+  var nl = text.indexOf('\n');
+  if (nl >= 0 && /Τέλος|Μέχρις/.test(text)) pos = s + text.indexOf('\n    ') + 5;
+  ta.focus();
+  ta.setSelectionRange(pos, pos);
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function buildOne(wrap) {
+  var start, seedIn = wrap.getAttribute('data-inputs') || '';
+  if (wrap.dataset.seed != null) {
+    start = wrap.dataset.seed;                       // ξαναχτίσιμο από αποθηκευμένο αρχείο
+  } else {
+    var seed = wrap.querySelector('script[type="text/glossa"]');
+    start = seed ? seed.textContent.replace(/^\n/, '').replace(/\s+$/, '') : '';
+    wrap.dataset.seed = start;
+  }
+  var id = wrap.getAttribute('data-field') || ('glossa' + Math.random().toString(36).slice(2, 8));
+
+  wrap.innerHTML = '';
+
+  var bar = el('div', 'gl-toolbar');
+  SNIPPETS.forEach(function (s) {
+    var b = el('button', 'gl-chip', s[0]); b.type = 'button';
+    b.addEventListener('click', function () { insertAt(code, s[1]); });
+    bar.appendChild(b);
+  });
+  var bar2 = el('div', 'gl-toolbar gl-sym');
+  SYMBOLS.forEach(function (s) {
+    var b = el('button', 'gl-chip', s); b.type = 'button';
+    b.addEventListener('click', function () { insertAt(code, s === 'και' || s === 'ή' || s === 'όχι' || s === 'div' || s === 'mod' ? ' ' + s + ' ' : s); });
+    bar2.appendChild(b);
+  });
+
+  var grid = el('div', 'gl-grid');
+
+  var left = el('div', 'gl-left');
+  var lab1 = el('label', 'gl-lab', 'Ο αλγόριθμός σου');
+  var code = el('textarea', 'gl-code');
+  code.value = start;
+  code.setAttribute('data-field', id + '_code');
+  code.setAttribute('spellcheck', 'false');
+  code.rows = Math.max(10, start.split('\n').length + 3);
+  left.appendChild(lab1); left.appendChild(code);
+
+  var right = el('div', 'gl-right');
+  var lab2 = el('label', 'gl-lab', 'Δεδομένα εισόδου (μία τιμή ανά γραμμή)');
+  var inp = el('textarea', 'gl-in');
+  inp.value = seedIn;
+  inp.setAttribute('data-field', id + '_in');
+  inp.rows = 5;
+  right.appendChild(lab2); right.appendChild(inp);
+
+  var lab3 = el('label', 'gl-lab', 'Έξοδος');
+  var out = el('pre', 'gl-out');
+  right.appendChild(lab3); right.appendChild(out);
+
+  grid.appendChild(left); grid.appendChild(right);
+
+  var btns = el('div', 'gl-btns');
+  var bRun = el('button', 'gl-go', '▶ Εκτέλεση'); bRun.type = 'button';
+  var bStep = el('button', null, '⏭ Βήμα-βήμα'); bStep.type = 'button';
+  var bReset = el('button', null, '⟲ Επαναφορά'); bReset.type = 'button';
+  btns.appendChild(bRun); btns.appendChild(bStep); btns.appendChild(bReset);
+
+  var msg = el('div', 'gl-msg');
+  var lab4 = el('div', 'gl-lab gl-tablab', 'Πίνακας τιμών');
+  var tblBox = el('div', 'gl-tablebox');
+
+  wrap.appendChild(bar); wrap.appendChild(bar2); wrap.appendChild(grid);
+  wrap.appendChild(btns); wrap.appendChild(msg);
+  wrap.appendChild(lab4); wrap.appendChild(tblBox);
+
+  var M = null;
+
+  function inputs() {
+    return inp.value.split('\n').filter(function (x) { return x.trim() !== ''; });
+  }
+  function fresh() {
+    try { M = new Machine(code.value, inputs()); msg.className = 'gl-msg'; msg.textContent = ''; }
+    catch (e) { M = null; showErr((e instanceof GErr) ? e.toString() : String(e && e.msg ? e.msg : e)); }
+    return M;
+  }
+  function showErr(t) {
+    msg.className = 'gl-msg gl-err';
+    msg.textContent = '✗ ' + t;
+  }
+  function paint() {
+    if (!M) return;
+    out.textContent = M.out.join('\n');
+    renderTable(M, tblBox);
+    if (M.error) showErr(M.error);
+    else if (M.done) { msg.className = 'gl-msg gl-ok'; msg.textContent = '✓ Η εκτέλεση ολοκληρώθηκε.'; }
+    else { msg.className = 'gl-msg'; msg.textContent = 'Βήμα ' + M.trace.length + ' — πάτησε ξανά «Βήμα-βήμα».'; }
+  }
+  bRun.addEventListener('click', function () { if (fresh()) { M.runAll(); paint(); } });
+  bStep.addEventListener('click', function () {
+    if (!M || M.done) { if (!fresh()) return; }
+    M.step(); paint();
+  });
+  bReset.addEventListener('click', function () {
+    M = null; out.textContent = ''; tblBox.innerHTML = '';
+    msg.className = 'gl-msg'; msg.textContent = '';
+  });
+  code.addEventListener('input', function () { M = null; });
+  inp.addEventListener('input', function () { M = null; });
+}
+
+function renderTable(M, box) {
+  box.innerHTML = '';
+  if (!M.trace.length) return;
+  var cols = ['Αριθμός εντολής'].concat(M.conds).concat(M.order).concat(['Έξοδος']);
+  var t = el('table', 'gl-table');
+  var thead = el('thead'), tr = el('tr');
+  cols.forEach(function (c) { tr.appendChild(el('th', null, c)); });
+  thead.appendChild(tr); t.appendChild(thead);
+  var tb = el('tbody');
+  M.trace.forEach(function (r) {
+    var row = el('tr');
+    row.appendChild(el('td', 'gl-ln', r.note ? '…' : String(r.line)));
+    M.conds.forEach(function (c) {
+      row.appendChild(el('td', null, r.conds && (c in r.conds) ? (r.conds[c] ? 'Αληθής' : 'Ψευδής') : ''));
+    });
+    M.order.forEach(function (v) {
+      row.appendChild(el('td', null, r.assigns && (v in r.assigns) ? fmt(r.assigns[v]) : ''));
+    });
+    row.appendChild(el('td', null, r.out != null ? r.out : (r.note || '')));
+    tb.appendChild(row);
+  });
+  t.appendChild(tb);
+  box.appendChild(t);
+}
+
+window.GLOSSA_INIT = function () {
+  var ws = document.querySelectorAll('.glossa-interpreter-wrapper');
+  for (var i = 0; i < ws.length; i++) buildOne(ws[i]);
+};
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.GLOSSA_INIT);
+else window.GLOSSA_INIT();
+
+})();
+
+</script>
+<script>
+/* ============ αντιστοίχιση με σύρσιμο (drag & drop) ============ */
+(function () {
+'use strict';
+
+function chipsOf(root) { return Array.prototype.slice.call(root.querySelectorAll('.chip')); }
+
+function build(dnd) {
+  var pool = dnd.querySelector('.dnd-pool');
+  var rows = Array.prototype.slice.call(dnd.querySelectorAll('.dnd-row'));
+  var store = dnd.querySelector('input.dnd-store');
+  if (!store) {
+    store = document.createElement('input');
+    store.type = 'hidden';
+    store.className = 'dnd-store';
+    store.setAttribute('data-field', dnd.getAttribute('data-field') || ('dnd' + Math.random().toString(36).slice(2, 7)));
+    dnd.appendChild(store);
+  }
+  var msg = dnd.querySelector('.dnd-msg');
+  if (!msg) { msg = document.createElement('div'); msg.className = 'dnd-msg'; dnd.appendChild(msg); }
+
+  var sel = null;
+  function select(ch) {
+    chipsOf(dnd).forEach(function (c) { c.classList.remove('sel'); });
+    sel = ch; if (ch) ch.classList.add('sel');
+  }
+  function place(ch, target) {
+    if (!ch) return;
+    if (target.classList.contains('dnd-slot')) {
+      var cur = target.querySelector('.chip');
+      if (cur && cur !== ch) pool.appendChild(cur);
+      target.appendChild(ch);
+    } else {
+      pool.appendChild(ch);
+    }
+    select(null); save(); msg.textContent = ''; msg.className = 'dnd-msg';
+  }
+  function save() {
+    var d = {};
+    rows.forEach(function (r) {
+      var slot = r.querySelector('.dnd-slot');
+      var c = slot.querySelector('.chip');
+      slot.classList.toggle('filled', !!c);
+      d[r.getAttribute('data-key')] = c ? c.getAttribute('data-v') : '';
+    });
+    store.value = JSON.stringify(d);
+  }
+
+  chipsOf(dnd).forEach(function (ch) {
+    ch.setAttribute('draggable', 'true');
+    ch.addEventListener('dragstart', function (e) {
+      sel = ch; e.dataTransfer.setData('text/plain', ch.getAttribute('data-v'));
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    ch.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (sel && sel !== ch && ch.parentNode.classList.contains('dnd-slot')) { place(sel, ch.parentNode); return; }
+      select(sel === ch ? null : ch);
+    });
+  });
+
+  var targets = rows.map(function (r) { return r.querySelector('.dnd-slot'); }).concat([pool]);
+  targets.forEach(function (t) {
+    t.addEventListener('dragover', function (e) { e.preventDefault(); t.classList.add('over'); });
+    t.addEventListener('dragleave', function () { t.classList.remove('over'); });
+    t.addEventListener('drop', function (e) { e.preventDefault(); t.classList.remove('over'); place(sel, t); });
+    t.addEventListener('click', function () { if (sel) place(sel, t); });
+  });
+
+  var tools = dnd.querySelector('.dnd-tools');
+  if (tools) {
+    var bChk = tools.querySelector('[data-act="check"]');
+    var bClr = tools.querySelector('[data-act="clear"]');
+    if (bChk) bChk.addEventListener('click', function () {
+      var ok = 0, filled = 0;
+      rows.forEach(function (r) {
+        var c = r.querySelector('.dnd-slot .chip');
+        if (c) { filled++; if (c.getAttribute('data-v') === r.getAttribute('data-answer')) ok++; }
+      });
+      if (filled < rows.length) {
+        msg.className = 'dnd-msg'; msg.textContent = 'Συμπλήρωσε πρώτα όλες τις γραμμές (' + filled + '/' + rows.length + ').';
+      } else if (ok === rows.length) {
+        msg.className = 'dnd-msg ok'; msg.textContent = '✓ Όλα σωστά (' + ok + '/' + rows.length + ').';
+      } else {
+        msg.className = 'dnd-msg bad'; msg.textContent = 'Σωστά ' + ok + ' από ' + rows.length + '. Ξαναδές τα υπόλοιπα.';
+      }
+    });
+    if (bClr) bClr.addEventListener('click', function () {
+      chipsOf(dnd).forEach(function (c) { pool.appendChild(c); });
+      select(null); save(); msg.textContent = ''; msg.className = 'dnd-msg';
+    });
+  }
+  save();
+  dnd._restore = function () {
+    var d;
+    try { d = JSON.parse(store.value || '{}'); } catch (e) { return; }
+    rows.forEach(function (r) {
+      var want = d[r.getAttribute('data-key')];
+      var slot = r.querySelector('.dnd-slot');
+      var cur = slot.querySelector('.chip');
+      if (cur) pool.appendChild(cur);
+      if (!want) return;
+      var ch = chipsOf(dnd).filter(function (c) { return c.getAttribute('data-v') === want; })[0];
+      if (ch) slot.appendChild(ch);
+    });
+    save();
+  };
+}
+
+window.DND_INIT = function () {
+  var ds = document.querySelectorAll('.dnd');
+  for (var i = 0; i < ds.length; i++) build(ds[i]);
+};
+window.DND_SYNC = function () {
+  var ds = document.querySelectorAll('.dnd');
+  for (var i = 0; i < ds.length; i++) if (ds[i]._restore) ds[i]._restore();
+};
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.DND_INIT);
+else window.DND_INIT();
+})();
+
+
+/* ============ αποθήκευση · συνέχεια · εκτύπωση ============ */
+(function () {
+  var FILE_CODE = "O08P";
+  var st = document.getElementById("status");
+
+  function fields() { return Array.prototype.slice.call(document.querySelectorAll("[data-field]")); }
+  function say(m) { st.textContent = m; }
+
+  function apply(data) {
+    var n = 0;
+    fields().forEach(function (el) {
+      if (Object.prototype.hasOwnProperty.call(data, el.dataset.field)) { el.value = data[el.dataset.field]; n++; }
+    });
+    if (window.DND_SYNC) window.DND_SYNC();
+    return n;
+  }
+
+  function loadEmbedded() {
+    var embedded = document.getElementById("saved-state");
+    if (embedded) { try { apply(JSON.parse(embedded.textContent)); } catch (e) { } }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadEmbedded);
+  else loadEmbedded();
+
+  var GR2LAT = {"α":"a","ά":"a","β":"v","γ":"g","δ":"d","ε":"e","έ":"e","ζ":"z",
+    "η":"i","ή":"i","θ":"th","ι":"i","ί":"i","ϊ":"i","ΐ":"i","κ":"k","λ":"l","μ":"m",
+    "ν":"n","ξ":"x","ο":"o","ό":"o","π":"p","ρ":"r","σ":"s","ς":"s","τ":"t","υ":"y",
+    "ύ":"y","ϋ":"y","ΰ":"y","φ":"f","χ":"ch","ψ":"ps","ω":"o","ώ":"o"};
+
+  function slug(s) {
+    s = (s || "").trim().toLowerCase();
+    var out = "";
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (GR2LAT[ch]) out += GR2LAT[ch];
+      else if (/[a-z0-9]/.test(ch)) out += ch;
+      else if (/[\s_-]/.test(ch)) out += "_";
+    }
+    return out.replace(/_+/g, "_").replace(/^_|_$/g, "").slice(0, 24);
+  }
+  function buildName(d) {
+    var parts = [d.m1, d.m2, d.m3].map(slug).filter(Boolean);
+    var tm = slug(d.tmima);
+    return FILE_CODE + "_" + (tm ? tm + "_" : "") + (parts.length ? parts.join("-") : "omada") + ".html";
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", function () {
+    var data = {};
+    fields().forEach(function (el) { data[el.dataset.field] = el.value; });
+    data._ora = FILE_CODE;
+    data._titlos = document.title;
+    data._saved = new Date().toISOString();
+
+    if (!(data.m1 || "").trim()) {
+      say("Συμπληρώστε πρώτα τουλάχιστον το 1ο μέλος της ομάδας.");
+      document.getElementById("m1").focus();
+      return;
+    }
+
+    var clone = document.documentElement.cloneNode(true);
+    var old = clone.querySelector("#saved-state");
+    if (old) old.parentNode.removeChild(old);
+    var s = document.createElement("script");
+    s.id = "saved-state"; s.type = "application/json";
+    s.textContent = JSON.stringify(data);
+    clone.querySelector("head").appendChild(s);
+
+    var blob = new Blob(["<!DOCTYPE html>\n" + clone.outerHTML], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = buildName(data);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+
+    say("Αποθηκεύτηκε στις " + new Date().toLocaleTimeString("el-GR") + ".");
+  });
+
+  function openDetails() {
+    var ds = document.querySelectorAll("details");
+    for (var i = 0; i < ds.length; i++) ds[i].open = true;
+  }
+  window.addEventListener("beforeprint", openDetails);
+  document.getElementById("printBtn").addEventListener("click", function () { openDetails(); window.print(); });
+
+  var fileIn = document.getElementById("fileIn");
+  document.getElementById("loadBtn").addEventListener("click", function () { fileIn.click(); });
+
+  fileIn.addEventListener("change", function () {
+    var f = fileIn.files && fileIn.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var doc = new DOMParser().parseFromString(String(r.result), "text/html");
+        var tag = doc.getElementById("saved-state");
+        if (!tag) { say("Το αρχείο δεν περιέχει αποθηκευμένες απαντήσεις."); return; }
+        say("Φορτώθηκαν οι απαντήσεις σας (" + apply(JSON.parse(tag.textContent)) + " πεδία).");
+      } catch (e) {
+        say("Δεν μπόρεσα να διαβάσω το αρχείο. Βεβαιωθείτε ότι είναι το αποθηκευμένο φύλλο του μαθήματος.");
+      }
+      fileIn.value = "";
+    };
+    r.readAsText(f, "utf-8");
+  });
+})();
+
+</script>
+<script>
+/* Αυτοέλεγχος για λίστες επιλογής (.quiz) + εκτυπώσιμες επιλογές */
+(function () {
+  function buildPrint() {
+    document.querySelectorAll('select.qsel').forEach(function (s) {
+      var box = s.nextElementSibling;
+      if (!box || !box.classList.contains('popt')) {
+        box = document.createElement('div'); box.className = 'popt' + (s.options.length <= 3 ? ' tight' : '');
+        s.parentNode.insertBefore(box, s.nextSibling);
+      }
+      box.innerHTML = '';
+      Array.prototype.forEach.call(s.options, function (o) {
+        if (!o.value) return;
+        var sp = document.createElement('span');
+        sp.textContent = (s.value === o.value ? '\u2612 ' : '\u2610 ') + o.textContent;
+        box.appendChild(sp);
+      });
+    });
+  }
+  buildPrint();
+  window.addEventListener('beforeprint', buildPrint);
+  function msgOf(q) { var m = q.querySelector(':scope > .dnd-msg') || q.querySelector('.dnd-msg');
+    if (!m) { m = document.createElement('div'); m.className = 'dnd-msg'; q.appendChild(m); } return m; }
+  function norm(v) { return String(v).trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.').replace(/["«»']/g, ''); }
+  function reset(q) { q.querySelectorAll('select.qsel, input.qin').forEach(function (s) { s.classList.remove('right', 'wrong'); });
+    var m = msgOf(q); m.textContent = ''; m.className = 'dnd-msg'; }
+  document.querySelectorAll('.quiz').forEach(function (q) {
+    var sels = Array.prototype.slice.call(q.querySelectorAll('select.qsel[data-answer], input.qin[data-answer]'));
+    if (!sels.length) return;
+    sels.forEach(function (s) { s.addEventListener(s.tagName === 'SELECT' ? 'change' : 'input', function () { reset(q); }); });
+    var bc = q.querySelector('[data-qact="check"]'), bx = q.querySelector('[data-qact="clear"]');
+    if (bc) bc.addEventListener('click', function () {
+      var m = msgOf(q), filled = 0, ok = 0;
+      sels.forEach(function (s) { s.classList.remove('right', 'wrong'); if (s.value) filled++; });
+      if (filled < sels.length) { m.className = 'dnd-msg'; m.textContent = 'Συμπλήρωσε πρώτα όλες τις απαντήσεις (' + filled + '/' + sels.length + ').'; return; }
+      sels.forEach(function (s) { var ans = s.getAttribute('data-answer').split('|').map(norm); var r = ans.indexOf(norm(s.value)) >= 0; if (r) ok++; s.classList.add(r ? 'right' : 'wrong'); });
+      if (ok === sels.length) { m.className = 'dnd-msg ok'; m.textContent = '\u2713 Όλα σωστά (' + ok + '/' + sels.length + ').'; }
+      else { m.className = 'dnd-msg bad'; m.textContent = 'Σωστά ' + ok + ' από ' + sels.length + '. Ξαναδές όσα είναι με κόκκινο.'; }
+    });
+    if (bx) bx.addEventListener('click', function () { sels.forEach(function (s) { s.value = ''; }); reset(q); });
+  });
+})();
+</script>
+</body>
+</html>
